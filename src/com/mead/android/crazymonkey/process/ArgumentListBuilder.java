@@ -1,4 +1,4 @@
-package com.mead.android.crazymonkey;
+package com.mead.android.crazymonkey.process;
 
 import java.io.File;
 import java.io.Serializable;

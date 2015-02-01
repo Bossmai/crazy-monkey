@@ -31,13 +31,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import com.mead.android.crazymonkey.AndroidEmulator;
-import com.mead.android.crazymonkey.ArgumentListBuilder;
-import com.mead.android.crazymonkey.Callable;
 import com.mead.android.crazymonkey.CrazyMonkeyBuild;
-import com.mead.android.crazymonkey.LocalProc;
 import com.mead.android.crazymonkey.Messages;
-import com.mead.android.crazymonkey.ProcStarter;
-import com.mead.android.crazymonkey.QuotedStringTokenizer;
+import com.mead.android.crazymonkey.process.ArgumentListBuilder;
+import com.mead.android.crazymonkey.process.Callable;
+import com.mead.android.crazymonkey.process.LocalProc;
+import com.mead.android.crazymonkey.process.ProcStarter;
+import com.mead.android.crazymonkey.process.QuotedStringTokenizer;
 import com.mead.android.crazymonkey.sdk.AndroidSdk;
 import com.mead.android.crazymonkey.sdk.SdkInstallationException;
 import com.mead.android.crazymonkey.sdk.Tool;

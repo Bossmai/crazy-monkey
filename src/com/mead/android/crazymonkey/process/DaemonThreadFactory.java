@@ -21,40 +21,30 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.mead.android.crazymonkey.util;
+package com.mead.android.crazymonkey.process;
 
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.Executors;
-import java.util.logging.Logger;
-import java.util.logging.Level;
+import java.util.concurrent.ThreadFactory;
 
 /**
- * {@link ThreadFactory} that creates a thread, which in turn displays a stack trace
- * when it terminates unexpectedly.
+ * {@link ThreadFactory} that creates daemon threads.
  *
  * @author Kohsuke Kawaguchi
- * @since 1.226
  */
-public class ExceptionCatchingThreadFactory implements ThreadFactory, Thread.UncaughtExceptionHandler {
+public class DaemonThreadFactory implements ThreadFactory {
     private final ThreadFactory core;
 
-    public ExceptionCatchingThreadFactory() {
+    public DaemonThreadFactory() {
         this(Executors.defaultThreadFactory());
     }
 
-    public ExceptionCatchingThreadFactory(ThreadFactory core) {
+    public DaemonThreadFactory(ThreadFactory core) {
         this.core = core;
     }
 
     public Thread newThread(Runnable r) {
         Thread t = core.newThread(r);
-        t.setUncaughtExceptionHandler(this);
+        t.setDaemon(true);
         return t;
     }
-
-    public void uncaughtException(Thread t, Throwable e) {
-        LOGGER.log(Level.WARNING, "Thread "+t.getName()+" terminated unexpectedly",e);
-    }
-
-    private static final Logger LOGGER = Logger.getLogger(ExceptionCatchingThreadFactory.class.getName());
 }

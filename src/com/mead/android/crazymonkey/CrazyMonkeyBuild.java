@@ -7,6 +7,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Executors;
 
+import com.mead.android.crazymonkey.process.Callable;
+import com.mead.android.crazymonkey.process.LocalChannel;
 import com.mead.android.crazymonkey.util.Utils;
 
 public class CrazyMonkeyBuild {
@@ -19,13 +21,15 @@ public class CrazyMonkeyBuild {
 
 	private int numberOfEmulators;
 	
-	private int startUpDelay = 0;
+	private int startUpDelay = 2;
 
 	private StreamTaskListener listener;
 	
 	private int startPort;
 	
 	private int endPort;
+	
+	private String logPath;
 	
 	//private List<int[]> availablePorts;
 	
@@ -39,42 +43,34 @@ public class CrazyMonkeyBuild {
     /** Interval during which killing a process should complete. */
     public static final int KILL_PROCESS_TIMEOUT_MS = 10 * 1000;
 	
-	public CrazyMonkeyBuild(String numberOfEmulators) throws IOException {
-		//TODO config file path
-		File crazyMonkeyHome = Utils.getCrazyMonkeyHomeDirectory("D://projects//private//android//crazy-monkey2");
+	public CrazyMonkeyBuild() throws IOException {
 		// get the properties from properties file
-		File configFile = new File(crazyMonkeyHome.getAbsolutePath(), "config.ini");
+		File configFile = new File(".", "config.ini");
+		
 		Map<String, String> config = Utils.parseConfigFile(configFile);
-
-		this.setAndroidSdkHome(config.get("ANDROID_SDK_HOME"));
-		this.setAndroidRootHome(config.get("ANDROID_ROOT_HOME"));
+		File crazyMonkeyFile = Utils.getCrazyMonkeyHomeDirectory(".");
+		
+		this.setCrazyMonkeyHome(crazyMonkeyFile.getAbsolutePath());
+		this.setAndroidSdkHome(config.get("android.sdk.home"));
+		this.setAndroidRootHome(config.get("android.sdk.root"));
 		
 		try {
-			this.setStartPort(Integer.parseInt(config.get("START_PORT")));
+			this.setStartPort(Integer.parseInt(config.get("emulator.start_port")));
 		} catch (NumberFormatException e) {
 			
 		}
 		
 		try {
-			this.setEndPort(Integer.parseInt(config.get("END_PORT")));
+			this.setEndPort(Integer.parseInt(config.get("emulator.end_port")));
 		} catch (NumberFormatException e) {
 			
 		}
 		
-		try {
-			this.setStartUpDelay(Integer.parseInt(config.get("STARTUP_DELAY")));
-		} catch (NumberFormatException e) {
-			
-		}
-
 		int numOfEmulator = 15;
 
 		try {
-			if (config.get("NUMBER_OF_EMULATORS") != null) {
-				numOfEmulator = Integer.parseInt(config.get("NUMBER_OF_EMULATORS"));
-			}
-			if (numberOfEmulators != null) {
-				numOfEmulator = Integer.parseInt(numberOfEmulators);
+			if (config.get("emulator.max_number") != null) {
+				numOfEmulator = Integer.parseInt(config.get("emulator.max_number"));
 			}
 		} catch (NumberFormatException e) {
 
@@ -83,38 +79,15 @@ public class CrazyMonkeyBuild {
 		this.setNumberOfEmulators(numOfEmulator);
 		this.listener = StreamTaskListener.fromStdout();
 		this.channel = new LocalChannel(Executors.newCachedThreadPool());
-		//this.generateAvailablePorts();
 	}
 
-	/*
-	public void generateAvailablePorts() {
-		int start = this.getStartPort();
-		this.availablePorts = new ArrayList<int[]>();
-
-		for (int i = 0; i < numberOfEmulators; i++) {
-			int[] ports = new int[3];
-			for (int j = 0; j < ports.length; j++) {
-				ports[j] = start++;
-			}
-			this.availablePorts.add(ports);
-		}
-	}
-	*/
-	
 	private static final int MAX_TRIES = 100;
 	
 	public synchronized int[] getNextPorts() {
-		/*
-		if (hasPorts()) {
-			int index = new Random(225).nextInt(this.availablePorts.size());
-			int[] ports = this.getAvailablePorts().get(index);
-			this.getAvailablePorts().remove(index);
-			return ports;
-		}
-		*/
+		
 		int count = 2;
-		int end = this.getEndPort();
 		int start = this.getStartPort();
+		int end = this.getEndPort();
 		boolean isConsecutive = true;
 		
 		int[] allocated = new int[count];
@@ -154,19 +127,6 @@ public class CrazyMonkeyBuild {
         
 	}
 	
-	/*
-	public synchronized void freePorts(int adbPort, int userPort, int adbServerPort) {
-		int[] ports = new int[]{adbPort, userPort, adbServerPort};
-		this.availablePorts.add(ports);
-	}
-	*/
-	
-	/*
-	public boolean hasPorts () {
-		return this.availablePorts.size() > 0;
-	}
-	*/
-
 	public String getCrazyMonkeyHome() {
 		return crazyMonkeyHome;
 	}
@@ -231,16 +191,6 @@ public class CrazyMonkeyBuild {
 		this.endPort = endPort;
 	}
 	
-	/*
-	public List<int[]> getAvailablePorts() {
-		return availablePorts;
-	}
-
-	public void setAvailablePorts(List<int[]> availablePorts) {
-		this.availablePorts = availablePorts;
-	}
-	*/
-	
 	public LocalChannel getChannel() {
 		return channel;
 	}
@@ -275,4 +225,12 @@ public class CrazyMonkeyBuild {
 
         private static final long serialVersionUID = 1L;
     }
+
+	public String getLogPath() {
+		return logPath;
+	}
+
+	public void setLogPath(String logPath) {
+		this.logPath = logPath;
+	}
 }

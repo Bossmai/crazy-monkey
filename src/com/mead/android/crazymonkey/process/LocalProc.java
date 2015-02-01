@@ -1,4 +1,4 @@
-package com.mead.android.crazymonkey;
+package com.mead.android.crazymonkey.process;
 
 import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 
@@ -17,9 +17,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.input.NullInputStream;
 
-import com.mead.android.crazymonkey.util.DaemonThreadFactory;
-import com.mead.android.crazymonkey.util.ExceptionCatchingThreadFactory;
-import com.mead.android.crazymonkey.util.NamingThreadFactory;
+import com.mead.android.crazymonkey.StreamTaskListener;
 import com.mead.android.crazymonkey.util.Utils;
 
 public class LocalProc {

@@ -1,4 +1,4 @@
-package com.mead.android.crazymonkey;
+package com.mead.android.crazymonkey.process;
 
 import static org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM;
 
@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.mead.android.crazymonkey.StreamTaskListener;
 import com.mead.android.crazymonkey.util.Utils;
 
 

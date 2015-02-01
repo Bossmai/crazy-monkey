@@ -22,31 +22,32 @@ import com.mead.android.crazymonkey.sdk.AndroidSdk;
 public class StartUp {
 
 	public static void main(String[] args) throws IOException {
-		
-		final CrazyMonkeyBuild build = new CrazyMonkeyBuild(args.length > 0 ? args[0] : null);
+
+		final CrazyMonkeyBuild build = new CrazyMonkeyBuild();
 		final AndroidSdk sdk = new AndroidSdk(build.getAndroidSdkHome(), build.getAndroidRootHome());
 
 		ExecutorService threadPool = Executors.newCachedThreadPool();
 		CompletionService<Task> cs = new ExecutorCompletionService<Task>(threadPool);
 
+		// TODO Get the real tasks list
 		TaskDAO taskDAO = new DummyTask();
 		List<Task> tasks = taskDAO.getTasksListByDay(build.getNumberOfEmulators(), "AC-DE-35-43-97-0E", new Date());
 
 		for (int i = 0; i < tasks.size(); i++) {
 			Task task = tasks.get(i);
 			taskDAO.assignTask(tasks, task.getId());
-			
-			File f = new File(sdk.getSdkHome() + "//logs//log_" + task.getId() + ".txt");
-			f.getParentFile().mkdirs(); 
+
+			File f = new File(build.getCrazyMonkeyHome() + "//logs//log_" + task.getId() + ".txt");
+			f.getParentFile().mkdirs();
 			f.createNewFile();
 			FileOutputStream file = new FileOutputStream(f);
-			
+
 			cs.submit(new RunScripts(build, task, sdk, new StreamTaskListener(new BufferedOutputStream(file))));
 		}
 
 		BufferedWriter file = null;
 		try {
-			File f = new File(sdk.getSdkHome() + "//logs//build_log.txt");
+			File f = new File(build.getCrazyMonkeyHome() + "//logs//build_log.txt");
 			if (!f.exists()) {
 				f.getParentFile().mkdirs();
 				f.createNewFile();
@@ -55,10 +56,11 @@ public class StartUp {
 
 			for (int i = 0; i < tasks.size(); i++) {
 				Task task = cs.take().get();
-				String result = String.format("[" + new Date() + "] The task '%s' has complete with status %s. \r\n", task.getId(), task.getStatus());
+				String result = String.format("[" + new Date() + "] - The task '%s' has been completed with status %s. \r\n", task.getId(),
+						task.getStatus());
 				file.append(result);
 			}
-			
+
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		} catch (ExecutionException e) {
@@ -70,8 +72,6 @@ public class StartUp {
 			}
 			threadPool.shutdown();
 		}
-		
 		System.out.println("DONE");
-		
 	}
 }

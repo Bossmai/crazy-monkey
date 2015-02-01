@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="create_run_jar" name="Create Runnable Jar for Project crazy-monkey with libraries in sub-folder">
+	<property environment="env" /> 
+	<property name="build.dir" value="." />
+	<property name="java.version.required" value="1.7" />
+	
+	<path id="lib.classpath">
+		<fileset dir="${build.dir}/lib" includes="*.jar" />
+	</path>
+
+	<target name="create_run_jar" depends="clean, compile">
+		<jar destfile="${build.dir}/dist/crazy-monkey.jar">
+			<manifest>
+				<attribute name="Main-Class" value="com.mead.android.crazymonkey.StartUp" />
+				<attribute name="Class-Path" value=". lib/commons-io-2.4.jar lib/localizer-1.10.jar" />
+			</manifest>
+			<fileset dir="${build.dir}/bin" />
+		</jar>
+		<mkdir dir="${build.dir}/dist/lib" />
+		<copy file="${build.dir}/lib/commons-io-2.4.jar" todir="${build.dir}/dist/lib" />
+		<copy file="${build.dir}/lib/localizer-1.10.jar" todir="${build.dir}/dist/lib" />
+		<copy file="${build.dir}/config.ini" todir="${build.dir}/dist" />
+	</target>
+
+	<target name="clean" depends="">
+		<delete dir="${build.dir}/dist" />
+		<mkdir dir="${build.dir}/dist" />
+	</target>
+	
+	<target name="compile" depends="check-java-version">
+		<javac
+			srcdir="${build.dir}/src"
+			destdir="${build.dir}/bin"
+			classpathref="lib.classpath"
+			debug="true"
+			encoding="${javac.encoding}"
+			includeAntRuntime="false"
+			nowarn="${javac.nowarn}"
+			target="${ant.build.javac.target}"
+		/>
+	</target>
+	
+	<target name="check-java-version" description="Confirms Ant is running under correct Java version">
+			<echo message="Java Version: ${java.version}"/> 
+			<echo message="Java home: ${java.home}"/> 
+			<fail message="Unsupported Java version: ${java.version}. Java version ${java.version.required} is required.">
+				<condition> 
+					<not> 
+						<matches pattern="^${java.version.required}" string="${java.version}"/>
+					</not> 
+				</condition> 
+			</fail> 
+		</target>
+</project>

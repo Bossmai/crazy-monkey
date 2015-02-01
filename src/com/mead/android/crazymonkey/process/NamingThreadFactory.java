@@ -1,18 +1,18 @@
 /*
  * The MIT License
- * 
- * Copyright (c) 2004-2009, Sun Microsystems, Inc., Kohsuke Kawaguchi
- * 
+ *
+ * Copyright 2013 Jesse Glick.
+ *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
  * in the Software without restriction, including without limitation the rights
  * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
  * copies of the Software, and to permit persons to whom the Software is
  * furnished to do so, subject to the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be included in
  * all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
  * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
  * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
@@ -21,30 +21,37 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package com.mead.android.crazymonkey.util;
+
+package com.mead.android.crazymonkey.process;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
- * {@link ThreadFactory} that creates daemon threads.
- *
- * @author Kohsuke Kawaguchi
+ * Thread factory that sets thread name so we know who is responsible for so many threads being created.
+ * @since 1.541
  */
-public class DaemonThreadFactory implements ThreadFactory {
-    private final ThreadFactory core;
+public final class NamingThreadFactory implements ThreadFactory {
 
-    public DaemonThreadFactory() {
-        this(Executors.defaultThreadFactory());
+    private final AtomicInteger threadNum = new AtomicInteger();
+    private final ThreadFactory delegate;
+    private final String name;
+
+    /**
+     * Creates a new naming factory.
+     * @param delegate a baseline factory, such as {@link Executors#defaultThreadFactory} or {@link DaemonThreadFactory} or {@link ExceptionCatchingThreadFactory}
+     * @param name an identifier to be used in thread names; might be e.g. your {@link Class#getSimpleName}
+     */
+    public NamingThreadFactory(ThreadFactory delegate, String name) {
+        this.delegate = delegate;
+        this.name = name; // TODO consider uniquifying this
     }
 
-    public DaemonThreadFactory(ThreadFactory core) {
-        this.core = core;
-    }
-
-    public Thread newThread(Runnable r) {
-        Thread t = core.newThread(r);
-        t.setDaemon(true);
+    @Override public Thread newThread(Runnable r) {
+        Thread t = delegate.newThread(r);
+        t.setName(name + " [#" + threadNum.incrementAndGet() + "]");
         return t;
     }
+
 }
