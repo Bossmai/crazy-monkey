@@ -54,7 +54,6 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 	public Task call() throws Exception {
 		runEmulator();
 		logger.flush();
-		Thread.sleep(5 * 1000);
 		
 		Builder installBuilder = InstallBuilder.getInstance(task);
 		boolean result = installBuilder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
@@ -662,8 +661,8 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		// Other tools use the "bootanim" variant, which supposedly signifies the system has booted a bit further;
 		// though this doesn't appear to be available on Android 1.5, while it should work fine on Android 1.6+
 		final boolean isOldApi = apiLevel > 0 && apiLevel < 4;
-		final String cmd = isOldApi ? "dev.bootcomplete" : "init.svc.bootanim";
-		final String expectedAnswer = isOldApi ? "1" : "stopped";
+		final String cmd = isOldApi ? "dev.bootcomplete" : "sys.boot_completed";
+		final String expectedAnswer = "1";
 		final String args = String.format("-s %s shell getprop %s", emu.getSerial(), cmd);
 		ArgumentListBuilder bootCheckCmd = emu.getToolCommand(Tool.ADB, args);
 

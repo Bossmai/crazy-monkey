@@ -22,7 +22,7 @@ public abstract class CommandLineBuilder extends Builder{
 		this.script = script;
 	}
 	
-	public abstract String[] buildCommandLine(File script);
+	public abstract String[] buildCommandLine(File script, AndroidEmulatorContext emuContext);
 	
 	public boolean perform(CrazyMonkeyBuild build, AndroidSdk androidSdk, AndroidEmulator emulator, AndroidEmulatorContext emuContext,
 			StreamTaskListener taskListener) throws IOException, InterruptedException {
@@ -44,7 +44,7 @@ public abstract class CommandLineBuilder extends Builder{
 			if (Utils.isUnix()) {
 				buildEnvironment.put("LD_LIBRARY_PATH", String.format("%s/tools/lib", androidSdk.getSdkRoot()));
 			}
-			r = new ProcStarter().cmds(buildCommandLine(file)).stdout(taskListener).start().join();
+			r = new ProcStarter().cmds(buildCommandLine(file, emuContext)).stdout(taskListener).start().join();
 		} catch (IOException e) {
 			e.printStackTrace();
 			AndroidEmulator.log(logger, String.format("Run the batch file '%s' failed.", script));

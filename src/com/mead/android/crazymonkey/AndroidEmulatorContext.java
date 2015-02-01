@@ -7,7 +7,6 @@ import java.util.TreeMap;
 
 import com.mead.android.crazymonkey.process.ArgumentListBuilder;
 import com.mead.android.crazymonkey.process.LocalProc;
-import com.mead.android.crazymonkey.process.NullStream;
 import com.mead.android.crazymonkey.process.ProcStarter;
 import com.mead.android.crazymonkey.sdk.AndroidSdk;
 import com.mead.android.crazymonkey.sdk.Tool;
@@ -95,7 +94,7 @@ public class AndroidEmulatorContext {
 		if (Utils.isUnix()) {
 			buildEnvironment.put("LD_LIBRARY_PATH", String.format("%s/tools/lib", sdk.getSdkRoot()));
 		}
-		return new ProcStarter().stdout(new NullStream()).stderr(this.getTaskListener().getLogger()).envs(buildEnvironment);
+		return new ProcStarter().stdout(this.getTaskListener().getLogger()).stderr(this.getTaskListener().getLogger()).envs(buildEnvironment);
 	}
 	
 	/**
