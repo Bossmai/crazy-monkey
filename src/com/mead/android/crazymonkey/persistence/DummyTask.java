@@ -53,33 +53,19 @@ public class DummyTask implements TaskDAO {
 			"",
 			""
 		);
-		
-		
 
-		List<AppRunner> appRunners = new ArrayList<AppRunner>();
 		AppRunner appRunner = new AppRunner();
-		appRunner.setAppId("ifengnew1");
+		appRunner.setAppId("ifeng.apk");
 		appRunner.setAppName("凤凰新闻");
 		appRunner.setAppType("ifengnew");
 		appRunner.setPackageName("com.ifeng.new2");
-		appRunner.setScriptName("ifengnew1_new.zip");
+		appRunner.setScriptName("123.bat");
 		appRunner.setScriptType("New");
-
-		AppRunner appRunner2 = new AppRunner();
-		appRunner2.setAppId("ifengnew1");
-		appRunner2.setAppName("凤凰新闻");
-		appRunner2.setAppType("ifengnew");
-		appRunner2.setPackageName("com.ifeng.new2");
-		appRunner2.setScriptName("ifengnew_alive.zip");
-		appRunner2.setScriptType("Alive");
-
-		appRunners.add(appRunner);
-		appRunners.add(appRunner2);
 
 		task.setPhone(phone);
 		task.setEmulator(emulator);
 		task.setSlaver(slaver);
-		task.setAppRunners(appRunners);
+		task.setAppRunner(appRunner);
 
 		task.setPlanExecDate(new Date());
 		task.setPlanExecPeriod("7-22");
@@ -107,21 +93,18 @@ public class DummyTask implements TaskDAO {
 			""
 		); 
 
-		List<AppRunner> appRunners2 = new ArrayList<AppRunner>();
 		AppRunner appRunner3 = new AppRunner();
-		appRunner3.setAppId("ifengnew1");
+		appRunner3.setAppId("ifeng.apk");
 		appRunner3.setAppName("凤凰新闻");
 		appRunner3.setAppType("ifengnew");
 		appRunner3.setPackageName("com.ifeng.new2");
-		appRunner3.setScriptName("ifengnew_alive.zip");
+		appRunner3.setScriptName("123.bat");
 		appRunner3.setScriptType("Alive");
-
-		appRunners2.add(appRunner3);
 
 		task2.setPhone(phone);
 		task2.setEmulator(emulator2);
 		task2.setSlaver(slaver);
-		task2.setAppRunners(appRunners2);
+		task2.setAppRunner(appRunner3);
 
 		task2.setPlanExecDate(new Date());
 		task2.setPlanExecPeriod("7-22");
@@ -137,59 +120,6 @@ public class DummyTask implements TaskDAO {
 	public List<Task> getTasks(int times, String slaverMac, Date date) {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public boolean assignTask(List<Task> tasks, String id) {
-		Task task = this.getTaskById(tasks, id);
-		if (task != null) {
-			task.setAssignTime(new Date());
-			if (task.getStatus() == Task.STATUS.NONE) {
-				task.setStatus(Task.STATUS.READY);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public boolean startTask(List<Task> tasks, String id) {
-		Task task = this.getTaskById(tasks, id);
-		if (task != null) {
-			task.setExecStartTime(new Date());
-			if (task.getStatus() == Task.STATUS.READY) {
-				task.setStatus(Task.STATUS.PROCESSING);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public boolean compelteTask(List<Task> tasks, String id, Task.STATUS result, String log) {
-		Task task = this.getTaskById(tasks, id);
-		if (task != null) {
-			task.setExceEndTime(new Date());
-			if (task.getStatus() == Task.STATUS.PROCESSING) {
-				task.setStatus(result);
-				task.setLog(log);
-				return true;
-			}
-		}
-		return false;
-	}
-
-	@Override
-	public Task getTaskById(List<Task> tasks, String id) {
-		Task task = null;
-		if (tasks != null && !tasks.isEmpty()) {
-			for (Task t : tasks) {
-				if (id != null && id.equals(t.getId())) {
-					return t;
-				}
-			}
-		}
-		return task;
 	}
 
 }

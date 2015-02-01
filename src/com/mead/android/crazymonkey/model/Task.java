@@ -1,7 +1,6 @@
 package com.mead.android.crazymonkey.model;
 
 import java.util.Date;
-import java.util.List;
 
 import com.mead.android.crazymonkey.AndroidEmulator;
 
@@ -27,7 +26,7 @@ public class Task {
 
 	private Slaver slaver;
 
-	private List<AppRunner> appRunners;
+	private AppRunner appRunner;
 	
 	private Date createTime;
 
@@ -45,8 +44,8 @@ public class Task {
 		super();
 	}
 
-	public List<AppRunner> getAppRunners() {
-		return appRunners;
+	public AppRunner getAppRunner() {
+		return appRunner;
 	}
 
 	public Date getAssignTime() {
@@ -105,8 +104,8 @@ public class Task {
 		return status;
 	}
 
-	public void setAppRunners(List<AppRunner> appRunners) {
-		this.appRunners = appRunners;
+	public void setAppRunner(AppRunner appRunner) {
+		this.appRunner = appRunner;
 	}
 
 	public void setAssignTime(Date assignTime) {
@@ -163,6 +162,35 @@ public class Task {
 
 	public void setStatus(STATUS status) {
 		this.status = status;
+	}
+
+	public boolean assignTask() {
+		this.setAssignTime(new Date());
+		if (this.getStatus() == Task.STATUS.NONE) {
+			this.setStatus(Task.STATUS.READY);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean startTask() {
+		this.setExecStartTime(new Date());
+		if (this.getStatus() == Task.STATUS.READY) {
+			this.setStatus(Task.STATUS.PROCESSING);
+			return true;
+		}
+		return false;
+	}
+
+	public boolean compelteTask(Task.STATUS result) {
+		this.setExceEndTime(new Date());
+		if (this.getStatus() == Task.STATUS.PROCESSING) {
+			this.setStatus(result);
+			this.setLog(log);
+			return true;
+		}
+
+		return false;
 	}
 
 }

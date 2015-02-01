@@ -3,14 +3,16 @@
 	<property environment="env" /> 
 	<property name="build.dir" value="." />
 	<property name="java.version.required" value="1.7" />
+	<property name="crazy_monkey_version" value="0.1" />
 	
 	<path id="lib.classpath">
 		<fileset dir="${build.dir}/lib" includes="*.jar" />
 	</path>
 
 	<target name="create_run_jar" depends="clean, compile">
-		<jar destfile="${build.dir}/dist/crazy-monkey.jar">
+		<jar destfile="${build.dir}/dist/crazy-monkey-${crazy_monkey_version}.jar">
 			<manifest>
+				<attribute name="Manifest-Version" value="${crazy_monkey_version}" />
 				<attribute name="Main-Class" value="com.mead.android.crazymonkey.StartUp" />
 				<attribute name="Class-Path" value=". lib/commons-io-2.4.jar lib/localizer-1.10.jar" />
 			</manifest>

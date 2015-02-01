@@ -12,6 +12,9 @@ import java.net.Socket;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.mead.android.crazymonkey.build.Builder;
+import com.mead.android.crazymonkey.build.InstallBuilder;
+import com.mead.android.crazymonkey.build.RunBatBuilder;
 import com.mead.android.crazymonkey.model.HardwareProperty;
 import com.mead.android.crazymonkey.model.Task;
 import com.mead.android.crazymonkey.model.Task.STATUS;
@@ -49,8 +52,40 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 
 	@Override
 	public Task call() throws Exception {
-		this.runEmulator();
+		runEmulator();
+		logger.flush();
+		Thread.sleep(5 * 1000);
+		
+		Builder installBuilder = InstallBuilder.getInstance(task);
+		boolean result = installBuilder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
+		
+		if (!result) {
+			log(logger, String.format("Failed to intsall the apk '%s'.", task.getAppRunner().getAppId()));
+			task.setStatus(STATUS.INCOMPLETE);
+			logger.flush();
+		} else {
+			task.startTask();
+			String script = build.getTestScriptPath() + "//" + task.getAppRunner().getScriptName();
+			Builder builder = new RunBatBuilder(script);
+			result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
+			if (!result) {
+				log(logger, String.format("Run the script '%s' failed.", script));
+				task.compelteTask(STATUS.FAILURE);
+			} else {
+				log(logger, String.format("Run the script '%s' scussfully.", script));
+				task.compelteTask(STATUS.SUCCESS);
+			}
+			logger.flush();
+		}
+        tearDown();
 		return task;
+	}
+
+	public void tearDown() throws IOException, InterruptedException {
+		cleanUp(build, task.getEmulator(), context);
+        
+        logger.flush();
+        logger.close();
 	}
 
 	public boolean createAvd() throws InterruptedException, EmulatorCreationException {
@@ -342,33 +377,6 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		return;
 	}
 	
-	/*
-	public boolean deleteAvd() throws IOException {
-		if (logger == null) {
-			logger = taskListener.getLogger();
-		}
-		AndroidEmulator emulator = task.getEmulator();
-		String avdName = emulator.getAvdName();
-
-		// Check whether the AVD exists
-		final File homeDir = Utils.getHomeDirectory(androidSdk.getSdkHome());
-		final File avdDirectory = Utils.getAvdDirectory(homeDir, avdName);
-		final boolean emulatorExists = avdDirectory.exists();
-		if (!emulatorExists) {
-			AndroidEmulator.log(logger, Messages.AVD_DIRECTORY_NOT_FOUND(avdDirectory));
-			return false;
-		}
-
-		// Recursively delete the contents
-		Utils.delFile(avdDirectory);
-
-		// Delete the metadata file
-		Utils.getAvdMetadataFile(androidSdk.getSdkHome(), avdName).delete();
-
-		// Success!
-		return true;
-	}
-	*/
 	
 	public Boolean runEmulator () throws InterruptedException, IOException {
 		
@@ -409,6 +417,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         }
         
         final AndroidEmulatorContext emu = new AndroidEmulatorContext(build, ports, androidSdk, taskListener);
+        this.setContext(emu);
 
         // We manually start the adb-server so that later commands will not have to start it,
         // allowing them to complete faster.
@@ -582,12 +591,6 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         final long bootCompleteTime = System.currentTimeMillis();
         log(logger, Messages.EMULATOR_IS_READY((bootCompleteTime - bootTime) / 1000));
 
-        //TODO to clean up the environment cleanUp(emuConfig, emu, logWriter, logcatFile, logcatStream, artifactsDir);
-        cleanUp(build, emuConfig, emu);
-        
-        logger.flush();
-        logger.close();
-        
 		return true;
 	}
 	

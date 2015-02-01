@@ -3,6 +3,7 @@ package com.mead.android.crazymonkey;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Executors;
@@ -10,6 +11,7 @@ import java.util.concurrent.Executors;
 import com.mead.android.crazymonkey.process.Callable;
 import com.mead.android.crazymonkey.process.LocalChannel;
 import com.mead.android.crazymonkey.util.Utils;
+import com.mead.android.crazymonkey.build.Builder;
 
 public class CrazyMonkeyBuild {
 
@@ -31,9 +33,13 @@ public class CrazyMonkeyBuild {
 	
 	private String logPath;
 	
-	//private List<int[]> availablePorts;
-	
 	private LocalChannel channel;
+	
+	private String apkFilePath;
+	
+	private String testScriptPath;
+	
+	private List<Builder> builders;
 	
 	public static final int ADB_CONNECT_TIMEOUT_MS = 60 * 1000;
 	
@@ -43,7 +49,7 @@ public class CrazyMonkeyBuild {
     /** Interval during which killing a process should complete. */
     public static final int KILL_PROCESS_TIMEOUT_MS = 10 * 1000;
 	
-	public CrazyMonkeyBuild() throws IOException {
+	public CrazyMonkeyBuild(List<Builder> builders) throws IOException {
 		// get the properties from properties file
 		File configFile = new File(".", "config.ini");
 		
@@ -77,8 +83,14 @@ public class CrazyMonkeyBuild {
 		}
 
 		this.setNumberOfEmulators(numOfEmulator);
+		
+		this.setLogPath(this.crazyMonkeyHome + "//logs");
+		this.setApkFilePath(config.get("apk.file_path"));
+		this.setTestScriptPath(config.get("apk.test_script_path"));
+		
 		this.listener = StreamTaskListener.fromStdout();
 		this.channel = new LocalChannel(Executors.newCachedThreadPool());
+		this.builders = builders;
 	}
 
 	private static final int MAX_TRIES = 100;
@@ -232,5 +244,29 @@ public class CrazyMonkeyBuild {
 
 	public void setLogPath(String logPath) {
 		this.logPath = logPath;
+	}
+
+	public String getApkFilePath() {
+		return apkFilePath;
+	}
+
+	public void setApkFilePath(String apkFilePath) {
+		this.apkFilePath = apkFilePath;
+	}
+
+	public String getTestScriptPath() {
+		return testScriptPath;
+	}
+
+	public void setTestScriptPath(String testScriptPath) {
+		this.testScriptPath = testScriptPath;
+	}
+
+	public List<Builder> getBuilders() {
+		return builders;
+	}
+
+	public void setBuilders(List<Builder> builders) {
+		this.builders = builders;
 	}
 }

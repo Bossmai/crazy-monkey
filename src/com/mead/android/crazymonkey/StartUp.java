@@ -22,8 +22,8 @@ import com.mead.android.crazymonkey.sdk.AndroidSdk;
 public class StartUp {
 
 	public static void main(String[] args) throws IOException {
-
-		final CrazyMonkeyBuild build = new CrazyMonkeyBuild();
+		
+		final CrazyMonkeyBuild build = new CrazyMonkeyBuild(null);
 		final AndroidSdk sdk = new AndroidSdk(build.getAndroidSdkHome(), build.getAndroidRootHome());
 
 		ExecutorService threadPool = Executors.newCachedThreadPool();
@@ -35,19 +35,22 @@ public class StartUp {
 
 		for (int i = 0; i < tasks.size(); i++) {
 			Task task = tasks.get(i);
-			taskDAO.assignTask(tasks, task.getId());
-
-			File f = new File(build.getCrazyMonkeyHome() + "//logs//log_" + task.getId() + ".txt");
-			f.getParentFile().mkdirs();
-			f.createNewFile();
-			FileOutputStream file = new FileOutputStream(f);
-
-			cs.submit(new RunScripts(build, task, sdk, new StreamTaskListener(new BufferedOutputStream(file))));
+			task.assignTask();
+			if (args != null && args.length > 0 &&  args[0].equals("-debug")) {
+				cs.submit(new RunScripts(build, task, sdk, StreamTaskListener.fromStdout()));
+			} else {
+				File f = new File(build.getLogPath() + "//" + task.getId() + ".log");
+				f.getParentFile().mkdirs();
+				f.createNewFile();
+				FileOutputStream file = new FileOutputStream(f);
+				cs.submit(new RunScripts(build, task, sdk, new StreamTaskListener(new BufferedOutputStream(file))));
+			}
+			
 		}
 
 		BufferedWriter file = null;
 		try {
-			File f = new File(build.getCrazyMonkeyHome() + "//logs//build_log.txt");
+			File f = new File(build.getLogPath() + "//build.log");
 			if (!f.exists()) {
 				f.getParentFile().mkdirs();
 				f.createNewFile();

@@ -11,12 +11,4 @@ public interface TaskDAO {
 
 	public List<Task> getTasks(int times, String slaverMac, Date date);
 
-	public Task getTaskById(List<Task> tasks, String id);
-
-	public boolean assignTask(List<Task> tasks, String id);
-
-	public boolean startTask(List<Task> tasks, String id);
-
-	public boolean compelteTask(List<Task> tasks, String id, Task.STATUS staus, String log);
-
 }
