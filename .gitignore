@@ -1,7 +1,5 @@
 /bin
 /logs
 /dist
-/apk
-/test
 *.class
 .classpath
