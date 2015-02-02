@@ -3,6 +3,7 @@ package com.mead.android.crazymonkey.build;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -16,13 +17,16 @@ import com.mead.android.crazymonkey.util.Utils;
 
 public abstract class CommandLineBuilder extends Builder{
 	
-	private String script;
+	protected String script;
 	
-	public CommandLineBuilder(String script) {
+	protected List<String> args;
+	
+	public CommandLineBuilder(String script, List<String> args) {
 		this.script = script;
+		this.args = args;
 	}
 	
-	public abstract String[] buildCommandLine(File script, AndroidEmulatorContext emuContext);
+	public abstract String[] buildCommandLine();
 	
 	public boolean perform(CrazyMonkeyBuild build, AndroidSdk androidSdk, AndroidEmulator emulator, AndroidEmulatorContext emuContext,
 			StreamTaskListener taskListener) throws IOException, InterruptedException {
@@ -44,7 +48,7 @@ public abstract class CommandLineBuilder extends Builder{
 			if (Utils.isUnix()) {
 				buildEnvironment.put("LD_LIBRARY_PATH", String.format("%s/tools/lib", androidSdk.getSdkRoot()));
 			}
-			r = new ProcStarter().cmds(buildCommandLine(file, emuContext)).stdout(taskListener).start().join();
+			r = new ProcStarter().cmds(buildCommandLine()).stdout(taskListener).start().join();
 		} catch (IOException e) {
 			e.printStackTrace();
 			AndroidEmulator.log(logger, String.format("Run the batch file '%s' failed.", script));

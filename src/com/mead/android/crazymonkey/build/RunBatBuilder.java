@@ -1,16 +1,23 @@
 package com.mead.android.crazymonkey.build;
 
-import java.io.File;
-
-import com.mead.android.crazymonkey.AndroidEmulatorContext;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RunBatBuilder extends CommandLineBuilder {
 
-	public RunBatBuilder(String script) {
-		super(script);
+	public RunBatBuilder(String script, List<String> args) {
+		super(script, args);
 	}
 
-	public String[] buildCommandLine(File script, AndroidEmulatorContext emuContext) {
-		return new String[] { "cmd", "/c", "call", script.getAbsolutePath(), emuContext.getSerial() };
+	public String[] buildCommandLine() {
+		List<String> cmds = new ArrayList<String>();
+
+		cmds.add("cmd");
+		cmds.add("/c");
+		cmds.add("call");
+		cmds.add(script);
+		cmds.addAll(args);
+
+		return cmds.toArray(new String[] {});
 	}
 }

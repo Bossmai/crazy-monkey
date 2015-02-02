@@ -42,7 +42,7 @@ public enum Tool {
         }
         return executable + windowsExtension;
     }
-
+    
     public String findInSdk(AndroidSdk androidSdk) throws SdkInstallationException {
         return toolLocator.findInSdk(androidSdk, this);
     }

@@ -335,6 +335,40 @@ public class Utils {
 
 		return builder;
 	}
+	
+	/**
+	 * Generates a ready-to-use ArgumentListBuilder for one of the Android SDK tools.
+	 * 
+	 * @param androidSdk The Android SDK to use.
+	 * @param isUnix Whether the system where this command should run is sane.
+	 * @param tool The Android tool to run.
+	 * @param args Any extra arguments for the command.
+	 * @return Arguments including the full path to the SDK and any extra Windows stuff required.
+	 */
+	public static ArgumentListBuilder getToolCommand(AndroidSdk androidSdk, boolean isUnix, Tool tool, String program, String args) {
+		// Determine the path to the desired tool
+		String androidToolsDir;
+		if (androidSdk.hasKnownRoot()) {
+			try {
+				androidToolsDir = androidSdk.getSdkRoot() + tool.findInSdk(androidSdk);
+			} catch (SdkInstallationException e) {
+				LOGGER.warning("A build-tools directory was found but there were no build-tools installed. Assuming command is on the PATH");
+				androidToolsDir = "";
+			}
+		} else {
+			LOGGER.warning("SDK root not found. Assuming command is on the PATH");
+			androidToolsDir = "";
+		}
+
+		// Build tool command
+		// final String executable = tool.getExecutable(isUnix);
+		ArgumentListBuilder builder = new ArgumentListBuilder(androidToolsDir + program);
+		if (args != null) {
+			builder.add(tokenize(args));
+		}
+
+		return builder;
+	}
 
 	public static String[] tokenize(String s, String delimiter) {
 		return QuotedStringTokenizer.tokenize(s, delimiter);

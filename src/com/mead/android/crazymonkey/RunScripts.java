@@ -9,12 +9,15 @@ import java.io.PrintWriter;
 import java.io.PushbackInputStream;
 import java.io.StringWriter;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import com.mead.android.crazymonkey.build.Builder;
 import com.mead.android.crazymonkey.build.InstallBuilder;
 import com.mead.android.crazymonkey.build.RunBatBuilder;
+import com.mead.android.crazymonkey.build.RunShellBuilder;
 import com.mead.android.crazymonkey.model.HardwareProperty;
 import com.mead.android.crazymonkey.model.Task;
 import com.mead.android.crazymonkey.model.Task.STATUS;
@@ -24,6 +27,7 @@ import com.mead.android.crazymonkey.process.ForkOutputStream;
 import com.mead.android.crazymonkey.process.LocalProc;
 import com.mead.android.crazymonkey.process.StreamCopyThread;
 import com.mead.android.crazymonkey.sdk.AndroidSdk;
+import com.mead.android.crazymonkey.sdk.SdkInstallationException;
 import com.mead.android.crazymonkey.sdk.Tool;
 import com.mead.android.crazymonkey.util.Utils;
 
@@ -65,7 +69,11 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		} else {
 			task.startTask();
 			String script = build.getTestScriptPath() + "//" + task.getAppRunner().getScriptName();
-			Builder builder = new RunBatBuilder(script);
+			List<String> args = new ArrayList<String>();
+			args.add(context.getSerial());
+			
+			Builder builder = getBuilder(script, args);
+			
 			result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
 			if (!result) {
 				log(logger, String.format("Run the script '%s' failed.", script));
@@ -77,7 +85,18 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 			logger.flush();
 		}
         tearDown();
+        
 		return task;
+	}
+
+	public Builder getBuilder(String script, List<String> args) {
+		Builder builder = null;
+		if (!Utils.isUnix()) {
+			builder = new RunBatBuilder(script, args);
+		} else {
+			builder = new RunShellBuilder(script, args);
+		}
+		return builder;
 	}
 
 	public void tearDown() throws IOException, InterruptedException {
@@ -376,6 +395,42 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		return;
 	}
 	
+	public void configPhoneInfo() throws IOException, InterruptedException {
+		
+		if (logger == null) {
+			logger = taskListener.getLogger();
+        }
+		
+		String script = build.getTestScriptPath() + "//config_phone.bat";
+		List<String> args = new ArrayList<String>();
+		args.add(String.valueOf(context.getUserPort()));
+		args.add(task.getPhone().getIMEI());
+		args.add(task.getPhone().getIMSI());
+		
+		String androidToolsDir = "";
+		if (androidSdk.hasKnownRoot()) {
+			try {
+				androidToolsDir = androidSdk.getSdkRoot() + Tool.EMULATOR.findInSdk(androidSdk);
+			} catch (SdkInstallationException e) {
+				androidToolsDir = "";
+			}
+		} else {
+			androidToolsDir = "";
+		}
+		args.add(androidToolsDir);
+		
+		Builder builder = this.getBuilder(script, args);
+		
+		boolean result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
+		if (!result) {
+			log(logger, String.format("Config the phone information '%s' failed.", script));
+			task.setStatus(STATUS.NOT_BUILT);
+		} else {
+			log(logger, String.format("Config the phone information '%s' scussfully.", script));
+		}
+		return;
+	}
+	
 	
 	public Boolean runEmulator () throws InterruptedException, IOException {
 		
@@ -401,7 +456,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         if (hardwareProperties != null && hardwareProperties.length != 0) {
             this.configAvd();
         }
-
+        
         // Delay start up by the configured amount of time
         final int delaySecs = build.getStartUpDelay();
         if (delaySecs > 0) {
@@ -417,6 +472,8 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         
         final AndroidEmulatorContext emu = new AndroidEmulatorContext(build, ports, androidSdk, taskListener);
         this.setContext(emu);
+        
+        this.configPhoneInfo();
 
         // We manually start the adb-server so that later commands will not have to start it,
         // allowing them to complete faster.
@@ -466,7 +523,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         ByteArrayOutputStream emulatorOutput = new ByteArrayOutputStream();
         ForkOutputStream emulatorLogger = new ForkOutputStream(logger, emulatorOutput);
 
-        final LocalProc emulatorProcess = emu.getToolProcStarter(emuConfig.getExecutable(), emulatorArgs).stdout(emulatorLogger).start();
+        final LocalProc emulatorProcess = emu.getToolProcStarter(emuConfig.getExecutable(), emu.getSerial(), emulatorArgs).stdout(emulatorLogger).start();
         emu.setEmulatorProcess(emulatorProcess);
 
         // Give the emulator process a chance to initialise

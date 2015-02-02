@@ -37,6 +37,7 @@ public class AndroidEmulator {
 	private int startupDelay;
 	private String commandLineOptions;
 	private String executable;
+	
 	private String androidSdkHome;
 
 
@@ -277,5 +278,9 @@ public class AndroidEmulator {
 
         return sb.toString();
     }
+    
+    public void setExecutable(String executable) {
+		this.executable = executable;
+	}
 
 }

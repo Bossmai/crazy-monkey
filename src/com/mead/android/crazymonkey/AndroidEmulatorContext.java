@@ -49,6 +49,20 @@ public class AndroidEmulatorContext {
 		return getProcStarter(Utils.getToolCommand(sdk, Utils.isUnix(), tool, args));
 	}
 	
+	
+	/**
+	 * Generates a ready-to-use ProcStarter for one of the Android SDK tools, based on the current context.
+	 * 
+	 * @param tool The Android tool to run.
+	 * @param args Any extra arguments for the command.
+	 * @return A ready ProcStarter
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
+	public ProcStarter getToolProcStarter(Tool tool, String program, String args) throws IOException, InterruptedException {
+		return getProcStarter(Utils.getToolCommand(sdk, Utils.isUnix(), tool, program, args));
+	}
+	
 	/**
 	 * Generates a ready-to-use ArgumentListBuilder for one of the Android SDK tools, based on the current
 	 * context.
@@ -90,6 +104,7 @@ public class AndroidEmulatorContext {
 		//buildEnvironment.put("ANDROID_ADB_SERVER_PORT", Integer.toString(adbServerPort));
 		if (sdk.hasKnownHome()) {
 			buildEnvironment.put("ANDROID_SDK_HOME", sdk.getSdkHome());
+			buildEnvironment.put("Path", String.format("%s/tools/lib",sdk.getSdkRoot()));
 		}
 		if (Utils.isUnix()) {
 			buildEnvironment.put("LD_LIBRARY_PATH", String.format("%s/tools/lib", sdk.getSdkRoot()));

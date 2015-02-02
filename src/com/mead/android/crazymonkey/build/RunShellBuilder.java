@@ -1,18 +1,23 @@
 package com.mead.android.crazymonkey.build;
 
-import java.io.File;
-
-import com.mead.android.crazymonkey.AndroidEmulatorContext;
+import java.util.ArrayList;
+import java.util.List;
 
 public class RunShellBuilder extends CommandLineBuilder {
 
-	public RunShellBuilder(String script) {
-		super(script);
+	public RunShellBuilder(String script, List<String> args) {
+		super(script, args);
 	}
 
-	private String cmd = "/bin/sh";
+	public String[] buildCommandLine() {
 
-	public String[] buildCommandLine(File script, AndroidEmulatorContext emuContext) {
-		return new String[] { cmd, "-xe", script.getAbsolutePath(), emuContext.getSerial() };
+		List<String> cmds = new ArrayList<String>();
+
+		cmds.add("/bin/sh");
+		cmds.add("/xe");
+		cmds.add(script);
+		cmds.addAll(args);
+
+		return cmds.toArray(new String[] {});
 	}
 }
