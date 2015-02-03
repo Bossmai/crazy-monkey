@@ -283,4 +283,64 @@ public class AndroidEmulator {
 		this.executable = executable;
 	}
 
+	public void setAvdName(String avdName) {
+		this.avdName = avdName;
+	}
+
+	public void setOsVersion(AndroidPlatform osVersion) {
+		this.osVersion = osVersion;
+	}
+
+	public void setScreenDensity(ScreenDensity screenDensity) {
+		this.screenDensity = screenDensity;
+	}
+
+	public void setScreenResolution(ScreenResolution screenResolution) {
+		this.screenResolution = screenResolution;
+	}
+
+	public void setDeviceLocale(String deviceLocale) {
+		this.deviceLocale = deviceLocale;
+	}
+
+	public void setTargetAbi(String targetAbi) {
+		this.targetAbi = targetAbi;
+	}
+
+	public void setSdCardSize(String sdCardSize) {
+		this.sdCardSize = sdCardSize;
+	}
+
+	public void setAvdNameSuffix(String avdNameSuffix) {
+		this.avdNameSuffix = avdNameSuffix;
+	}
+
+	public void setHardwareProperties(HardwareProperty[] hardwareProperties) {
+		this.hardwareProperties = hardwareProperties;
+	}
+
+	public void setWipeData(boolean wipeData) {
+		this.wipeData = wipeData;
+	}
+
+	public void setShowWindow(boolean showWindow) {
+		this.showWindow = showWindow;
+	}
+
+	public void setUseSnapshots(boolean useSnapshots) {
+		this.useSnapshots = useSnapshots;
+	}
+
+	public void setDeleteAfterBuild(boolean deleteAfterBuild) {
+		this.deleteAfterBuild = deleteAfterBuild;
+	}
+
+	public void setStartupDelay(int startupDelay) {
+		this.startupDelay = startupDelay;
+	}
+
+	public void setCommandLineOptions(String commandLineOptions) {
+		this.commandLineOptions = commandLineOptions;
+	}
+
 }

@@ -500,6 +500,12 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
             snapshotState = SnapshotState.NONE;
         }
 
+        if (task.getAppRunner() != null && task.getAppRunner().getScriptType().equals("New")) {
+        	emuConfig.setWipeData(true);
+        } else if (task.getAppRunner() != null && task.getAppRunner().getScriptType().equals("Alive")) {
+        	emuConfig.setCommandLineOptions(emuConfig.getCommandLineOptions() + " -data userdata-qemu-old.img -initdata userdata-old.img");
+        }
+        
         // Compile complete command for starting emulator
         final String emulatorArgs = emuConfig.getCommandArguments(snapshotState,
                 androidSdk.supportsSnapshots(), emu.getUserPort(), emu.getAdbPort());
@@ -522,8 +528,10 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         // Prepare to capture and log emulator standard output
         ByteArrayOutputStream emulatorOutput = new ByteArrayOutputStream();
         ForkOutputStream emulatorLogger = new ForkOutputStream(logger, emulatorOutput);
-
-        final LocalProc emulatorProcess = emu.getToolProcStarter(emuConfig.getExecutable(), emu.getSerial(), emulatorArgs).stdout(emulatorLogger).start();
+        final File homeDir = Utils.getHomeDirectory(emu.getSdk().getSdkHome());
+        		
+		final LocalProc emulatorProcess = emu.getToolProcStarter(emuConfig.getExecutable(), emu.getSerial(), emulatorArgs)
+				.stdout(emulatorLogger).pwd(Utils.getAvdDirectory(homeDir, emuConfig.getAvdName())).start();
         emu.setEmulatorProcess(emulatorProcess);
 
         // Give the emulator process a chance to initialise
