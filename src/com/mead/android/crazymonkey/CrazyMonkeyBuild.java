@@ -137,8 +137,10 @@ public class CrazyMonkeyBuild {
                     }
                     allocated[offset] = i;
                 } catch (IOException ex) {
+                	allocationFailed = true;
                     break;
                 } catch (InterruptedException e) {
+                	allocationFailed = true;
 					e.printStackTrace();
 				}
             }
