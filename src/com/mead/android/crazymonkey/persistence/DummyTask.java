@@ -59,7 +59,7 @@ public class DummyTask implements TaskDAO {
 		appRunner.setAppName("凤凰新闻");
 		appRunner.setAppType("ifengnew");
 		appRunner.setPackageName("com.ifeng.new2");
-		appRunner.setScriptName("ifeng.bat");
+		appRunner.setScriptName("ifeng_test.bat");
 		appRunner.setScriptType("New");
 
 		task.setPhone(phone);
@@ -98,7 +98,7 @@ public class DummyTask implements TaskDAO {
 		appRunner3.setAppName("凤凰新闻");
 		appRunner3.setAppType("ifengnew");
 		appRunner3.setPackageName("com.ifeng.new2");
-		appRunner3.setScriptName("ifeng.bat");
+		appRunner3.setScriptName("ifeng_test.bat");
 		appRunner3.setScriptType("Alive");
 
 		task2.setPhone(phone);

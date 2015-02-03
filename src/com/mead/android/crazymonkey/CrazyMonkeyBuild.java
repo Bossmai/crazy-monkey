@@ -3,9 +3,11 @@ package com.mead.android.crazymonkey;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Executors;
 
 import com.mead.android.crazymonkey.process.Callable;
@@ -40,6 +42,8 @@ public class CrazyMonkeyBuild {
 	private String testScriptPath;
 	
 	private List<Builder> builders;
+	
+	private Set<Integer> occupiedPorts = new HashSet<Integer>();
 	
 	public static final int ADB_CONNECT_TIMEOUT_MS = 60 * 1000;
 	
@@ -125,6 +129,11 @@ public class CrazyMonkeyBuild {
                     final int i;
                     synchronized (this) {
                         i = allocatePort(requestedPort);
+                        if (!this.occupiedPorts.contains(i)) {
+                            this.occupiedPorts.add(i);
+                        } else {
+                        	throw new IOException("The port has been occupied.");
+                        }
                     }
                     allocated[offset] = i;
                 } catch (IOException ex) {
@@ -134,7 +143,6 @@ public class CrazyMonkeyBuild {
 				}
             }
         }
-        
         return allocated;
         
 	}
@@ -268,5 +276,23 @@ public class CrazyMonkeyBuild {
 
 	public void setBuilders(List<Builder> builders) {
 		this.builders = builders;
+	}
+
+	public Set<Integer> getOccupiedPorts() {
+		return occupiedPorts;
+	}
+
+	public void setOccupiedPorts(Set<Integer> occupiedPorts) {
+		this.occupiedPorts = occupiedPorts;
+	}
+	
+	public synchronized void freePorts (int[] ports) {
+		if (ports != null) {
+			for (int i = 0; i < ports.length; i++) {
+				if (this.occupiedPorts.contains(ports[i])) {
+					this.occupiedPorts.remove(ports[i]);
+				}
+			}
+		}
 	}
 }
