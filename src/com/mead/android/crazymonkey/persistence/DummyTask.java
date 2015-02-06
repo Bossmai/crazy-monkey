@@ -67,7 +67,7 @@ public class DummyTask implements TaskDAO {
 		task.setSlaver(slaver);
 		task.setAppRunner(appRunner);
 
-		task.setPlanExecDate(new Date());
+		task.setPlanExecDate("2015/02/06");
 		task.setPlanExecPeriod("7-22");
 		task.setStatus(Task.STATUS.NONE);
 
@@ -106,7 +106,7 @@ public class DummyTask implements TaskDAO {
 		task2.setSlaver(slaver);
 		task2.setAppRunner(appRunner3);
 
-		task2.setPlanExecDate(new Date());
+		task2.setPlanExecDate("2015/02/06");
 		task2.setPlanExecPeriod("7-22");
 		task2.setStatus(Task.STATUS.NONE);
 
