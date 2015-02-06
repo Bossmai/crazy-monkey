@@ -473,7 +473,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         final AndroidEmulatorContext emu = new AndroidEmulatorContext(build, ports, androidSdk, taskListener);
         this.setContext(emu);
         
-        this.configPhoneInfo();
+        //this.configPhoneInfo();
 
         // We manually start the adb-server so that later commands will not have to start it,
         // allowing them to complete faster.
@@ -499,12 +499,15 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
             // If snapshots are disabled or not supported, there's nothing to do
             snapshotState = SnapshotState.NONE;
         }
-
+        
+        /*
+         * TODO add some control for the new and alive scripts
         if (task.getAppRunner() != null && task.getAppRunner().getScriptType().equals("New")) {
         	emuConfig.setWipeData(true);
         } else if (task.getAppRunner() != null && task.getAppRunner().getScriptType().equals("Alive")) {
         	emuConfig.setCommandLineOptions(emuConfig.getCommandLineOptions() + " -data userdata-qemu-old.img -initdata userdata-old.img");
         }
+        */
         
         // Compile complete command for starting emulator
         final String emulatorArgs = emuConfig.getCommandArguments(snapshotState,
@@ -530,7 +533,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         ForkOutputStream emulatorLogger = new ForkOutputStream(logger, emulatorOutput);
         final File homeDir = Utils.getHomeDirectory(emu.getSdk().getSdkHome());
         		
-		final LocalProc emulatorProcess = emu.getToolProcStarter(emuConfig.getExecutable(), emu.getSerial(), emulatorArgs)
+		final LocalProc emulatorProcess = emu.getToolProcStarter(emuConfig.getExecutable(), emulatorArgs)
 				.stdout(emulatorLogger).pwd(Utils.getAvdDirectory(homeDir, emuConfig.getAvdName())).start();
         emu.setEmulatorProcess(emulatorProcess);
 

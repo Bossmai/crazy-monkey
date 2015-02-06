@@ -43,6 +43,8 @@ public class CrazyMonkeyBuild {
 	
 	private List<Builder> builders;
 	
+	private String nodeHttpServer;
+	
 	private Set<Integer> occupiedPorts = new HashSet<Integer>();
 	
 	public static final int ADB_CONNECT_TIMEOUT_MS = 60 * 1000;
@@ -63,6 +65,8 @@ public class CrazyMonkeyBuild {
 		this.setCrazyMonkeyHome(crazyMonkeyFile.getAbsolutePath());
 		this.setAndroidSdkHome(config.get("android.sdk.home"));
 		this.setAndroidRootHome(config.get("android.sdk.root"));
+		
+		this.setNodeHttpServer(config.get("node.httpserver"));
 		
 		try {
 			this.setStartPort(Integer.parseInt(config.get("emulator.start_port")));
@@ -296,5 +300,13 @@ public class CrazyMonkeyBuild {
 				}
 			}
 		}
+	}
+
+	public String getNodeHttpServer() {
+		return nodeHttpServer;
+	}
+
+	public void setNodeHttpServer(String nodeHttpServer) {
+		this.nodeHttpServer = nodeHttpServer;
 	}
 }

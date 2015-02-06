@@ -14,7 +14,7 @@ public class Task {
 
 	private String jobId;
 
-	private Date planExecDate;
+	private String planExecDate;
 
 	private String planExecPeriod;
 
@@ -84,7 +84,7 @@ public class Task {
 		return phone;
 	}
 
-	public Date getPlanExecDate() {
+	public String getPlanExecDate() {
 		return planExecDate;
 	}
 
@@ -144,7 +144,7 @@ public class Task {
 		this.phone = phone;
 	}
 
-	public void setPlanExecDate(Date planExecDate) {
+	public void setPlanExecDate(String planExecDate) {
 		this.planExecDate = planExecDate;
 	}
 

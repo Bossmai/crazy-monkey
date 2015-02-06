@@ -16,6 +16,7 @@ import java.util.concurrent.Executors;
 
 import com.mead.android.crazymonkey.model.Task;
 import com.mead.android.crazymonkey.persistence.DummyTask;
+import com.mead.android.crazymonkey.persistence.MongoTask;
 import com.mead.android.crazymonkey.persistence.TaskDAO;
 import com.mead.android.crazymonkey.sdk.AndroidSdk;
 import com.mead.android.crazymonkey.util.Utils;
@@ -32,8 +33,16 @@ public class StartUp {
 			CompletionService<Task> cs = new ExecutorCompletionService<Task>(threadPool);
 	
 			// TODO Get the real tasks list
-			TaskDAO taskDAO = new DummyTask();
-			List<Task> tasks = taskDAO.getTasksListByDay(build.getNumberOfEmulators(), Utils.getMACAddr(), new Date());
+			List<Task> tasks = null;
+			TaskDAO taskDAO = null;
+			
+			if (args != null && args.length > 0 &&  args[0].equals("-debug")) {
+				taskDAO = new DummyTask();
+			} else {
+				taskDAO = new MongoTask(build);
+			}
+			
+			tasks = taskDAO.getTasksListByDay(build.getNumberOfEmulators(), Utils.getMACAddr(), new Date());
 	
 			for (int i = 0; i < tasks.size(); i++) {
 				Task task = tasks.get(i);
@@ -48,6 +57,7 @@ public class StartUp {
 					cs.submit(new RunScripts(build, task, sdk, new StreamTaskListener(new BufferedOutputStream(file))));
 				}
 			}
+			
 			File f = new File(build.getLogPath() + "//build.log");
 			if (!f.exists()) {
 				f.getParentFile().mkdirs();
