@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -13,7 +12,6 @@ import java.util.concurrent.Executors;
 import com.mead.android.crazymonkey.process.Callable;
 import com.mead.android.crazymonkey.process.LocalChannel;
 import com.mead.android.crazymonkey.util.Utils;
-import com.mead.android.crazymonkey.build.Builder;
 
 public class CrazyMonkeyBuild {
 
@@ -27,8 +25,6 @@ public class CrazyMonkeyBuild {
 	
 	private int startUpDelay = 2;
 
-	private StreamTaskListener listener;
-	
 	private int startPort;
 	
 	private int endPort;
@@ -41,9 +37,9 @@ public class CrazyMonkeyBuild {
 	
 	private String testScriptPath;
 	
-	private List<Builder> builders;
-	
 	private String nodeHttpServer;
+	
+	private StreamTaskListener listener;
 	
 	private Set<Integer> occupiedPorts = new HashSet<Integer>();
 	
@@ -55,7 +51,7 @@ public class CrazyMonkeyBuild {
     /** Interval during which killing a process should complete. */
     public static final int KILL_PROCESS_TIMEOUT_MS = 10 * 1000;
 	
-	public CrazyMonkeyBuild(List<Builder> builders) throws IOException {
+	public CrazyMonkeyBuild() throws IOException {
 		// get the properties from properties file
 		File configFile = new File(".", "config.ini");
 		
@@ -98,7 +94,6 @@ public class CrazyMonkeyBuild {
 		
 		this.listener = StreamTaskListener.fromStdout();
 		this.channel = new LocalChannel(Executors.newCachedThreadPool());
-		this.builders = builders;
 	}
 
 	private static final int MAX_TRIES = 100;
@@ -274,14 +269,6 @@ public class CrazyMonkeyBuild {
 
 	public void setTestScriptPath(String testScriptPath) {
 		this.testScriptPath = testScriptPath;
-	}
-
-	public List<Builder> getBuilders() {
-		return builders;
-	}
-
-	public void setBuilders(List<Builder> builders) {
-		this.builders = builders;
 	}
 
 	public Set<Integer> getOccupiedPorts() {

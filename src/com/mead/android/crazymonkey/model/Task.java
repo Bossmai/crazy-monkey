@@ -2,12 +2,16 @@ package com.mead.android.crazymonkey.model;
 
 import java.util.Date;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
 import com.mead.android.crazymonkey.AndroidEmulator;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Task {
 
 	public enum STATUS {
-		NONE, READY, PROCESSING, SUCCESS, FAILURE, INCOMPLETE, NOT_BUILT
+		NONE, INPROGRESS, SUCCESS, FAILURE, NOT_BUILT
 	}
 
 	private String id;
@@ -38,7 +42,6 @@ public class Task {
 
 	private String log;
 
-	private int[] ports;
 
 	public Task() {
 		super();
@@ -56,6 +59,7 @@ public class Task {
 		return createTime;
 	}
 
+	@JsonIgnore
 	public AndroidEmulator getEmulator() {
 		return emulator;
 	}
@@ -92,9 +96,6 @@ public class Task {
 		return planExecPeriod;
 	}
 
-	public int[] getPorts() {
-		return ports;
-	}
 
 	public Slaver getSlaver() {
 		return slaver;
@@ -116,6 +117,7 @@ public class Task {
 		this.createTime = createTime;
 	}
 
+	@JsonIgnore
 	public void setEmulator(AndroidEmulator emulator) {
 		this.emulator = emulator;
 	}
@@ -152,9 +154,6 @@ public class Task {
 		this.planExecPeriod = planExecPeriod;
 	}
 
-	public void setPorts(int[] ports) {
-		this.ports = ports;
-	}
 
 	public void setSlaver(Slaver slaver) {
 		this.slaver = slaver;
@@ -164,32 +163,22 @@ public class Task {
 		this.status = status;
 	}
 
-	public boolean assignTask() {
-		this.setAssignTime(new Date());
-		if (this.getStatus() == Task.STATUS.NONE) {
-			this.setStatus(Task.STATUS.READY);
-			return true;
-		}
-		return false;
-	}
+	
 
+	@JsonIgnore
 	public boolean startTask() {
 		this.setExecStartTime(new Date());
-		if (this.getStatus() == Task.STATUS.READY) {
-			this.setStatus(Task.STATUS.PROCESSING);
-			return true;
-		}
 		return false;
 	}
 
+	@JsonIgnore
 	public boolean compelteTask(Task.STATUS result) {
 		this.setExceEndTime(new Date());
-		if (this.getStatus() == Task.STATUS.PROCESSING) {
+		if (this.getStatus() == Task.STATUS.INPROGRESS) {
 			this.setStatus(result);
 			this.setLog(log);
 			return true;
 		}
-
 		return false;
 	}
 

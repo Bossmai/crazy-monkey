@@ -3,6 +3,7 @@ package com.mead.android.crazymonkey;
 import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -28,11 +29,10 @@ public class StartUp {
 		ExecutorService threadPool = Executors.newCachedThreadPool();
 		
 		try {
-			final CrazyMonkeyBuild build = new CrazyMonkeyBuild(null);
+			final CrazyMonkeyBuild build = new CrazyMonkeyBuild();
 			final AndroidSdk sdk = new AndroidSdk(build.getAndroidSdkHome(), build.getAndroidRootHome());
 			CompletionService<Task> cs = new ExecutorCompletionService<Task>(threadPool);
 	
-			// TODO Get the real tasks list
 			List<Task> tasks = null;
 			TaskDAO taskDAO = null;
 			
@@ -42,32 +42,25 @@ public class StartUp {
 				taskDAO = new MongoTask(build);
 			}
 			
-			tasks = taskDAO.getTasksListByDay(build.getNumberOfEmulators(), Utils.getMACAddr(), new Date());
+			tasks = taskDAO.getTasks(build.getNumberOfEmulators(), Utils.getMACAddr(), new Date());
 	
 			for (int i = 0; i < tasks.size(); i++) {
 				Task task = tasks.get(i);
-				task.assignTask();
 				if (args != null && args.length > 0 &&  args[0].equals("-debug")) {
 					cs.submit(new RunScripts(build, task, sdk, StreamTaskListener.fromStdout()));
 				} else {
-					File f = new File(build.getLogPath() + "//" + task.getId() + ".log");
-					f.getParentFile().mkdirs();
-					f.createNewFile();
-					FileOutputStream file = new FileOutputStream(f);
+					FileOutputStream file = getLoggerForTask(build, task);
 					cs.submit(new RunScripts(build, task, sdk, new StreamTaskListener(new BufferedOutputStream(file))));
 				}
 			}
 			
-			File f = new File(build.getLogPath() + "//build.log");
-			if (!f.exists()) {
-				f.getParentFile().mkdirs();
-				f.createNewFile();
-			}
-			buildLogFile = new BufferedWriter(new FileWriter(f, true));
+			buildLogFile = getLoggerForBuild(build);
 
 			for (int i = 0; i < tasks.size(); i++) {
 				Task task = cs.take().get();
 				String result = String.format("[" + new Date() + "] - The task '%s' has been completed with status %s in %d seconds. \r\n", task.getId(), task.getStatus(), (task.getExceEndTime().getTime() - task.getAssignTime().getTime() / 1000) );
+				
+				
 				buildLogFile.append(result);
 			}
 			
@@ -88,7 +81,28 @@ public class StartUp {
 			}
 			threadPool.shutdown();
 		}
-		//TODO update the tasks to the data base
+		
+		
 		System.out.println("DONE");
+		System.exit(0);
+	}
+
+	public static BufferedWriter getLoggerForBuild(final CrazyMonkeyBuild build) throws IOException {
+		BufferedWriter buildLogFile;
+		File f = new File(build.getLogPath() + "//build.log");
+		if (!f.exists()) {
+			f.getParentFile().mkdirs();
+			f.createNewFile();
+		}
+		buildLogFile = new BufferedWriter(new FileWriter(f, true));
+		return buildLogFile;
+	}
+
+	public static FileOutputStream getLoggerForTask(final CrazyMonkeyBuild build, Task task) throws IOException, FileNotFoundException {
+		File f = new File(build.getLogPath() + "//" + task.getId() + ".log");
+		f.getParentFile().mkdirs();
+		f.createNewFile();
+		FileOutputStream file = new FileOutputStream(f);
+		return file;
 	}
 }

@@ -13,7 +13,7 @@ import com.mead.android.crazymonkey.model.Task;
 public class DummyTask implements TaskDAO {
 
 	@Override
-	public List<Task> getTasksListByDay(int times, String slaverMac, Date date) {
+	public List<Task> getTasks(int times, String slaverMac, Date date) {
 
 		List<Task> tasks = new ArrayList<Task>();
 
@@ -115,11 +115,4 @@ public class DummyTask implements TaskDAO {
 
 		return tasks;
 	}
-
-	@Override
-	public List<Task> getTasks(int times, String slaverMac, Date date) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

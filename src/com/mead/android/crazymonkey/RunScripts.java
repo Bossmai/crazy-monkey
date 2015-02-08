@@ -57,36 +57,37 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 	@Override
 	public Task call() throws Exception {
 		runEmulator();
-		logger.flush();
 		
 		Builder installBuilder = InstallBuilder.getInstance(task);
 		boolean result = installBuilder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
 		
 		if (!result) {
 			log(logger, String.format("Failed to intsall the apk '%s'.", task.getAppRunner().getAppId()));
-			task.setStatus(STATUS.INCOMPLETE);
-			logger.flush();
+			task.setStatus(STATUS.FAILURE);
 		} else {
-			task.startTask();
-			String script = build.getTestScriptPath() + "//" + task.getAppRunner().getScriptName();
-			List<String> args = new ArrayList<String>();
-			args.add(context.getSerial());
-			
-			Builder builder = getBuilder(script, args);
-			
-			result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
-			if (!result) {
-				log(logger, String.format("Run the script '%s' failed.", script));
-				task.compelteTask(STATUS.FAILURE);
-			} else {
-				log(logger, String.format("Run the script '%s' scussfully.", script));
-				task.compelteTask(STATUS.SUCCESS);
-			}
-			logger.flush();
+			runScripts();
 		}
         tearDown();
-        
 		return task;
+	}
+
+	public void runScripts() throws IOException, InterruptedException {
+		boolean result;
+		task.startTask();
+		String script = build.getTestScriptPath() + "//" + task.getAppRunner().getScriptName();
+		List<String> args = new ArrayList<String>();
+		args.add(context.getSerial());
+		
+		Builder builder = getBuilder(script, args);
+		
+		result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
+		if (!result) {
+			log(logger, String.format("Run the script '%s' failed.", script));
+			task.compelteTask(STATUS.FAILURE);
+		} else {
+			log(logger, String.format("Run the script '%s' scussfully.", script));
+			task.compelteTask(STATUS.SUCCESS);
+		}
 	}
 
 	public Builder getBuilder(String script, List<String> args) {

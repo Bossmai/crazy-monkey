@@ -40,6 +40,11 @@ public class AndroidEmulator {
 	
 	private String androidSdkHome;
 
+	
+	public AndroidEmulator() {
+		this("Android_monkey_1", "android-17", "160", "HVGA", "en_US", "100M", false, true, false, "-partition-size 300", "armeabi-v7a",
+				"D://tools//Android//android-sdk", "", "");
+	}
 
 	public AndroidEmulator(String avdName, boolean wipeData, boolean showWindow, boolean useSnapshots, String commandLineOptions,
 			String androidSdkHome, String executable, String avdNameSuffix) {
