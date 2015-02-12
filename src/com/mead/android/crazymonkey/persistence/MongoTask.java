@@ -8,19 +8,21 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpStatus;
-import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
@@ -53,7 +55,7 @@ public class MongoTask implements TaskDAO {
 		String requestUrl = null;
 		try {
 			
-			requestUrl = String.format("%s/task/?slaver.slaverMAC=%s&planExecDate=%s", build.getNodeHttpServer(),
+			requestUrl = String.format("%s/task/getnew?slaver.slaverMAC=%s&planExecDate=%s", build.getNodeHttpServer(),
 					URLEncoder.encode(slaverMac, StandardCharsets.UTF_8.toString()),
 					URLEncoder.encode(format.format(date), StandardCharsets.UTF_8.toString()));
 		} catch (UnsupportedEncodingException e) {
@@ -147,39 +149,60 @@ public class MongoTask implements TaskDAO {
 	}
 	
 	public boolean updateTask(Task task) {
-		boolean result = false;
-		CloseableHttpClient httpclient = HttpClients.createDefault();
-		HttpPost httpPost = new HttpPost(String.format("%s/task/update?%s", build.getNodeHttpServer(), task.getId()));
-		List<NameValuePair> nvps = new ArrayList<NameValuePair>();
-		
-		DateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-		
-		nvps.add(new BasicNameValuePair("status", task.getStatus().toString()));
-		nvps.add(new BasicNameValuePair("slaver.slaverMAC", task.getSlaver().getSlaverMAC()));
-		nvps.add(new BasicNameValuePair("execStartTime", format.format(task.getExecStartTime())));
-		nvps.add(new BasicNameValuePair("exceEndTime", format.format(task.getExceEndTime())));
-		
-		try {
-			httpPost.setEntity(new UrlEncodedFormEntity(nvps));
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		boolean isSucess = false;
 
+		CloseableHttpClient httpClient = HttpClients.createDefault();
 		CloseableHttpResponse response = null;
 		try {
-			response = httpclient.execute(httpPost);
+
+			HttpPut putRequest = new HttpPut(String.format("%s/task/%s", build.getNodeHttpServer(), task.getId()));
+			putRequest.addHeader("Accept", "application/json");
+			putRequest.addHeader("Content-type", "application/json");
+            
+			DateFormat format = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+			Map<String, String> valuePair = new HashMap<String, String>();
+
+			if (task.getStatus() != null) {
+				valuePair.put("status", task.getStatus().toString());
+			}
+			if (task.getSlaver() != null && task.getSlaver().getSlaverMAC() != null) {
+				valuePair.put("slaver.slaverMAC", task.getSlaver().getSlaverMAC());
+			}
+			if (task.getAssignTime() != null) {
+				valuePair.put("assignTime", format.format(task.getAssignTime()));
+			}
+			if (task.getExecStartTime() != null) {
+				valuePair.put("execStartTime", format.format(task.getExecStartTime()));
+			}
+			if (task.getExceEndTime() != null) {
+				valuePair.put("exceEndTime", format.format(task.getExceEndTime()));
+			}
+
+			StringEntity input;
+
+			try {
+				input = new StringEntity(objectMapper.writeValueAsString(valuePair));
+				input.setContentType(new BasicHeader(HTTP.CONTENT_TYPE, "application/json"));
+			} catch (UnsupportedEncodingException e) {
+				e.printStackTrace();
+				return isSucess;
+			}
+			putRequest.setEntity(input);
+			response = httpClient.execute(putRequest);
 			HttpEntity entity = response.getEntity();
-			System.out.println(entity.getContent());
 			EntityUtils.consume(entity);
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		} finally {
 			try {
-				response.close();
+				if (response != null) {
+					response.close();
+				}
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-		return result;
+		return isSucess;
 	}
 }

@@ -115,4 +115,9 @@ public class DummyTask implements TaskDAO {
 
 		return tasks;
 	}
+
+	@Override
+	public boolean updateTask(Task task) {
+		return true;
+	}
 }

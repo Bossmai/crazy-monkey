@@ -46,6 +46,7 @@ public class StartUp {
 	
 			for (int i = 0; i < tasks.size(); i++) {
 				Task task = tasks.get(i);
+				task.setAssignTime(new Date());
 				if (args != null && args.length > 0 &&  args[0].equals("-debug")) {
 					cs.submit(new RunScripts(build, task, sdk, StreamTaskListener.fromStdout()));
 				} else {
@@ -53,14 +54,12 @@ public class StartUp {
 					cs.submit(new RunScripts(build, task, sdk, new StreamTaskListener(new BufferedOutputStream(file))));
 				}
 			}
-			
 			buildLogFile = getLoggerForBuild(build);
-
 			for (int i = 0; i < tasks.size(); i++) {
 				Task task = cs.take().get();
-				String result = String.format("[" + new Date() + "] - The task '%s' has been completed with status %s in %d seconds. \r\n", task.getId(), task.getStatus(), (task.getExceEndTime().getTime() - task.getAssignTime().getTime() / 1000) );
-				
-				
+				String result = String.format("[" + new Date() + "] - The task '%s' has been completed with status %s in %d seconds. \r\n",
+						task.getId(), task.getStatus(), (task.getExceEndTime().getTime() - task.getAssignTime().getTime()) / 1000);
+				taskDAO.updateTask(task);
 				buildLogFile.append(result);
 			}
 			

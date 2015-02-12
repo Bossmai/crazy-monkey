@@ -163,8 +163,6 @@ public class Task {
 		this.status = status;
 	}
 
-	
-
 	@JsonIgnore
 	public boolean startTask() {
 		this.setExecStartTime(new Date());
@@ -174,12 +172,8 @@ public class Task {
 	@JsonIgnore
 	public boolean compelteTask(Task.STATUS result) {
 		this.setExceEndTime(new Date());
-		if (this.getStatus() == Task.STATUS.INPROGRESS) {
-			this.setStatus(result);
-			this.setLog(log);
-			return true;
-		}
-		return false;
+		this.setStatus(result);
+		return true;
 	}
 
 }

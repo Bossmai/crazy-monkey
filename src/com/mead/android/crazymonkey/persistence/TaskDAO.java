@@ -8,5 +8,7 @@ import com.mead.android.crazymonkey.model.Task;
 public interface TaskDAO {
 
 	public List<Task> getTasks(int times, String slaverMac, Date date);
+	
+	public boolean updateTask(Task task);
 
 }
