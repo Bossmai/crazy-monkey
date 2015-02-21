@@ -58,6 +58,8 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 	public Task call() throws Exception {
 		runEmulator();
 		
+		configPhoneInfo();
+		
 		Builder installBuilder = InstallBuilder.getInstance(task);
 		boolean result = installBuilder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
 		
@@ -398,15 +400,18 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 	
 	public void configPhoneInfo() throws IOException, InterruptedException {
 		
+		Thread.sleep(10 * 1000);
+		
 		if (logger == null) {
 			logger = taskListener.getLogger();
         }
 		
 		String script = build.getTestScriptPath() + "//config_phone.bat";
 		List<String> args = new ArrayList<String>();
-		args.add(String.valueOf(context.getUserPort()));
-		args.add(task.getPhone().getIMEI());
-		args.add(task.getPhone().getIMSI());
+		args.add(String.valueOf(context.getSerial()));
+		
+		//args.add(task.getPhone().getIMEI());
+		//args.add(task.getPhone().getIMSI());
 		
 		String androidToolsDir = "";
 		if (androidSdk.hasKnownRoot()) {
@@ -598,25 +603,25 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         // Unlock emulator by pressing the Menu key once, if required.
         // Upon first boot (and when the data is wiped) the emulator is already unlocked
         final long bootDuration = System.currentTimeMillis() - bootTime;
-        if (emulatorAlreadyExists && !wipeData && snapshotState != SnapshotState.BOOT) {
-            // Even if the emulator has started, we generally need to wait longer before the lock
-            // screen is up and ready to accept key presses.
-            // The delay here is a function of boot time, i.e. relative to the slowness of the host
-            Thread.sleep(bootDuration / 4);
+        //if (emulatorAlreadyExists && !wipeData && snapshotState != SnapshotState.BOOT) {
+        // Even if the emulator has started, we generally need to wait longer before the lock
+        // screen is up and ready to accept key presses.
+        // The delay here is a function of boot time, i.e. relative to the slowness of the host
+        Thread.sleep(bootDuration / 4);
 
-            log(logger, Messages.UNLOCKING_SCREEN());
-            final String keyEventArgs = String.format("-s %s shell input keyevent %%d", emu.getSerial());
-            final String menuArgs = String.format(keyEventArgs, 82);
-            ArgumentListBuilder menuCmd = emu.getToolCommand(Tool.ADB, menuArgs);
-            emu.getProcStarter(menuCmd).join();
+        log(logger, Messages.UNLOCKING_SCREEN());
+        final String keyEventArgs = String.format("-s %s shell input keyevent %%d", emu.getSerial());
+        final String menuArgs = String.format(keyEventArgs, 82);
+        ArgumentListBuilder menuCmd = emu.getToolCommand(Tool.ADB, menuArgs);
+        emu.getProcStarter(menuCmd).join();
 
-            // If a named emulator already existed, it may not have been booted yet, so the screen
-            // wouldn't be locked.  Similarly, an non-named emulator may have already booted the
-            // first time without us knowing.  In both cases, we press Back after Menu to compensate
-            final String backArgs = String.format(keyEventArgs, 4);
-            ArgumentListBuilder backCmd = emu.getToolCommand(Tool.ADB, backArgs);
-            emu.getProcStarter(backCmd).join();
-        }
+        // If a named emulator already existed, it may not have been booted yet, so the screen
+        // wouldn't be locked.  Similarly, an non-named emulator may have already booted the
+        // first time without us knowing.  In both cases, we press Back after Menu to compensate
+        final String backArgs = String.format(keyEventArgs, 4);
+        ArgumentListBuilder backCmd = emu.getToolCommand(Tool.ADB, backArgs);
+        emu.getProcStarter(backCmd).join();
+        //}
 
         // Initialise snapshot image, if required
         if (snapshotState == SnapshotState.INITIALISE) {
