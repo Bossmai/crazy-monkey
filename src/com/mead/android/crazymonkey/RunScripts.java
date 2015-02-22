@@ -77,6 +77,9 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 			log(logger, String.format("Failed to intsall the apk '%s'.", task.getAppRunner().getAppId()));
 			task.setStatus(STATUS.FAILURE);
 		} else {
+			if (task.getAppRunner().getScriptType().equals("Alive")) {
+				restoreBackup();
+			}
 			runScripts();
 		}
         tearDown();
@@ -417,6 +420,10 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		writeDeviceTxt();
 		
 		String script = build.getTestScriptPath() + "//config_phone.bat";
+		if (Utils.isUnix()) {
+			script = build.getTestScriptPath() + "//config_phone.sh";
+		}
+		
 		List<String> args = new ArrayList<String>();
 		args.add(String.valueOf(context.getSerial()));
 		
@@ -440,6 +447,44 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 			task.setStatus(STATUS.NOT_BUILT);
 		} else {
 			log(logger, String.format("Config the phone information '%s' scussfully.", script));
+		}
+		return;
+	}
+	
+	public synchronized void restoreBackup() throws IOException, InterruptedException {
+		
+		if (logger == null) {
+			logger = taskListener.getLogger();
+        }
+		String script = build.getTestScriptPath() + "//restore_backup.bat";
+		
+		if (Utils.isUnix()) {
+			script = build.getTestScriptPath() + "//restore_backup.sh";
+		}
+		
+		List<String> args = new ArrayList<String>();
+		args.add(build.getCrazyMonkeyHome() + "//userdata//" + task.getAppRunner().getAppId() + "//backup.ab");
+		
+		String androidToolsDir = "";
+		if (androidSdk.hasKnownRoot()) {
+			try {
+				androidToolsDir = androidSdk.getSdkRoot() + Tool.EMULATOR.findInSdk(androidSdk);
+			} catch (SdkInstallationException e) {
+				androidToolsDir = "";
+			}
+		} else {
+			androidToolsDir = "";
+		}
+		args.add(androidToolsDir);
+		
+		Builder builder = this.getBuilder(script, args);
+		
+		boolean result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
+		if (!result) {
+			log(logger, String.format("Restore the apk bakcup '%s' failed.", script));
+			task.setStatus(STATUS.NOT_BUILT);
+		} else {
+			log(logger, String.format("Restore the apk bakcup '%s' scussfully.", script));
 		}
 		return;
 	}
