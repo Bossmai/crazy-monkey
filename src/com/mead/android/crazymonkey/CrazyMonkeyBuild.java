@@ -41,6 +41,8 @@ public class CrazyMonkeyBuild {
 	
 	private StreamTaskListener listener;
 	
+	private int configPhoneDelay = 10;
+	
 	private Set<Integer> occupiedPorts = new HashSet<Integer>();
 	
 	public static final int ADB_CONNECT_TIMEOUT_MS = 60 * 1000;
@@ -74,6 +76,18 @@ public class CrazyMonkeyBuild {
 			this.setEndPort(Integer.parseInt(config.get("emulator.end_port")));
 		} catch (NumberFormatException e) {
 			
+		}
+		
+		try {
+			this.setStartUpDelay(Integer.parseInt(config.get("emulator.start_up_delay")));
+		} catch (NumberFormatException e) {
+
+		}
+
+		try {
+			this.setConfigPhoneDelay(Integer.parseInt(config.get("emulator.config_phone_delay")));
+		} catch (NumberFormatException e) {
+
 		}
 		
 		int numOfEmulator = 15;
@@ -295,5 +309,13 @@ public class CrazyMonkeyBuild {
 
 	public void setNodeHttpServer(String nodeHttpServer) {
 		this.nodeHttpServer = nodeHttpServer;
+	}
+
+	public int getConfigPhoneDelay() {
+		return configPhoneDelay;
+	}
+
+	public void setConfigPhoneDelay(int configPhoneDelay) {
+		this.configPhoneDelay = configPhoneDelay;
 	}
 }

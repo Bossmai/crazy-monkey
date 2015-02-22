@@ -24,7 +24,7 @@ public class Task {
 
 	private STATUS status;
 
-	private Phone phone;
+	private Device phone;
 
 	private AndroidEmulator emulator;
 
@@ -38,7 +38,7 @@ public class Task {
 
 	private Date execStartTime;
 
-	private Date exceEndTime;
+	private Date execEndTime;
 
 	private String log;
 
@@ -64,8 +64,8 @@ public class Task {
 		return emulator;
 	}
 
-	public Date getExceEndTime() {
-		return exceEndTime;
+	public Date getExecEndTime() {
+		return execEndTime;
 	}
 
 	public Date getExecStartTime() {
@@ -84,7 +84,7 @@ public class Task {
 		return log;
 	}
 
-	public Phone getPhone() {
+	public Device getPhone() {
 		return phone;
 	}
 
@@ -122,8 +122,8 @@ public class Task {
 		this.emulator = emulator;
 	}
 
-	public void setExceEndTime(Date exceEndTime) {
-		this.exceEndTime = exceEndTime;
+	public void setExecEndTime(Date execEndTime) {
+		this.execEndTime = execEndTime;
 	}
 
 	public void setExecStartTime(Date execStartTime) {
@@ -142,7 +142,7 @@ public class Task {
 		this.log = log;
 	}
 
-	public void setPhone(Phone phone) {
+	public void setPhone(Device phone) {
 		this.phone = phone;
 	}
 
@@ -171,7 +171,7 @@ public class Task {
 
 	@JsonIgnore
 	public boolean compelteTask(Task.STATUS result) {
-		this.setExceEndTime(new Date());
+		this.setExecEndTime(new Date());
 		this.setStatus(result);
 		return true;
 	}

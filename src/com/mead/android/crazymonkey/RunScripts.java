@@ -2,6 +2,8 @@ package com.mead.android.crazymonkey;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -13,6 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
 
 import com.mead.android.crazymonkey.build.Builder;
 import com.mead.android.crazymonkey.build.InstallBuilder;
@@ -32,6 +38,8 @@ import com.mead.android.crazymonkey.sdk.Tool;
 import com.mead.android.crazymonkey.util.Utils;
 
 public class RunScripts implements java.util.concurrent.Callable<Task> {
+	
+	private static ObjectMapper objectMapper = new ObjectMapper();
 	
 	private CrazyMonkeyBuild build;
 
@@ -57,6 +65,8 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 	@Override
 	public Task call() throws Exception {
 		runEmulator();
+		
+		Thread.sleep(build.getConfigPhoneDelay() * 1000);
 		
 		configPhoneInfo();
 		
@@ -398,20 +408,17 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		return;
 	}
 	
-	public void configPhoneInfo() throws IOException, InterruptedException {
-		
-		Thread.sleep(10 * 1000);
+	public synchronized void configPhoneInfo() throws IOException, InterruptedException {
 		
 		if (logger == null) {
 			logger = taskListener.getLogger();
         }
 		
+		writeDeviceTxt();
+		
 		String script = build.getTestScriptPath() + "//config_phone.bat";
 		List<String> args = new ArrayList<String>();
 		args.add(String.valueOf(context.getSerial()));
-		
-		//args.add(task.getPhone().getIMEI());
-		//args.add(task.getPhone().getIMSI());
 		
 		String androidToolsDir = "";
 		if (androidSdk.hasKnownRoot()) {
@@ -436,7 +443,14 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		}
 		return;
 	}
-	
+
+	private void writeDeviceTxt() throws IOException, FileNotFoundException, JsonGenerationException, JsonMappingException {
+		File f = new File(build.getCrazyMonkeyHome() + "//userdata//xposeDevice.txt");
+		f.getParentFile().mkdirs();
+		f.createNewFile();
+		FileOutputStream file = new FileOutputStream(f);
+		objectMapper.writeValue(file, task.getPhone());
+	}
 	
 	public Boolean runEmulator () throws InterruptedException, IOException {
 		
@@ -444,7 +458,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         
         AndroidEmulator emuConfig = task.getEmulator();
         boolean useSnapshots = emuConfig.isUseSnapshots();
-        boolean wipeData = emuConfig.isWipeData();
+        //boolean wipeData = emuConfig.isWipeData();
         
         HardwareProperty[] hardwareProperties = emuConfig.getHardwareProperties();
 

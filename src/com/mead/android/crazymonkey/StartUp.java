@@ -58,7 +58,7 @@ public class StartUp {
 			for (int i = 0; i < tasks.size(); i++) {
 				Task task = cs.take().get();
 				String result = String.format("[" + new Date() + "] - The task '%s' has been completed with status %s in %d seconds. \r\n",
-						task.getId(), task.getStatus(), (task.getExceEndTime().getTime() - task.getAssignTime().getTime()) / 1000);
+						task.getId(), task.getStatus(), (task.getExecEndTime().getTime() - task.getAssignTime().getTime()) / 1000);
 				taskDAO.updateTask(task);
 				buildLogFile.append(result);
 			}

@@ -174,8 +174,8 @@ public class MongoTask implements TaskDAO {
 			if (task.getExecStartTime() != null) {
 				valuePair.put("execStartTime", format.format(task.getExecStartTime()));
 			}
-			if (task.getExceEndTime() != null) {
-				valuePair.put("exceEndTime", format.format(task.getExceEndTime()));
+			if (task.getExecEndTime() != null) {
+				valuePair.put("execEndTime", format.format(task.getExecEndTime()));
 			}
 
 			StringEntity input;

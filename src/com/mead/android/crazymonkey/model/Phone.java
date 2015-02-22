@@ -1,5 +1,6 @@
 package com.mead.android.crazymonkey.model;
 
+@Deprecated
 public class Phone {
 
 	private String manufacturer;

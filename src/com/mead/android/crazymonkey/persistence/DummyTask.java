@@ -6,7 +6,7 @@ import java.util.List;
 
 import com.mead.android.crazymonkey.AndroidEmulator;
 import com.mead.android.crazymonkey.model.AppRunner;
-import com.mead.android.crazymonkey.model.Phone;
+import com.mead.android.crazymonkey.model.Device;
 import com.mead.android.crazymonkey.model.Slaver;
 import com.mead.android.crazymonkey.model.Task;
 
@@ -21,7 +21,8 @@ public class DummyTask implements TaskDAO {
 
 		task.setId("ifengnew_xxxxxxxxx1");
 		task.setJobId("1");
-
+		
+		/*
 		Phone phone = new Phone();
 		phone.setIMEI("869585015357569");
 		phone.setIMSI("310260912121001");
@@ -29,7 +30,11 @@ public class DummyTask implements TaskDAO {
 		phone.setModelId("ZTEU817");
 		phone.setModelName("ZTEU817");
 		phone.setWifiMAC("09-98-AC-A9-65-C3");
-
+		*/
+		Device phone = new Device();
+		
+		
+		
 		Slaver slaver = new Slaver();
 		slaver.setSlaverIP("192.168.3.105");
 		slaver.setSlaverMAC("8C-70-5A-9C-71-C4");
