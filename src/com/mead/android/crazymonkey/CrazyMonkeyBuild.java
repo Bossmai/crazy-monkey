@@ -28,14 +28,16 @@ public class CrazyMonkeyBuild {
 	private int startPort;
 	
 	private int endPort;
+
+	private LocalChannel channel;
 	
 	private String logPath;
-	
-	private LocalChannel channel;
 	
 	private String apkFilePath;
 	
 	private String testScriptPath;
+	
+	private String userDataPath;
 	
 	private String nodeHttpServer;
 	
@@ -103,8 +105,9 @@ public class CrazyMonkeyBuild {
 		this.setNumberOfEmulators(numOfEmulator);
 		
 		this.setLogPath(this.crazyMonkeyHome + "//logs");
-		this.setApkFilePath(config.get("apk.file_path"));
-		this.setTestScriptPath(config.get("apk.test_script_path"));
+		this.setApkFilePath(this.crazyMonkeyHome + "//apk");
+		this.setTestScriptPath(this.crazyMonkeyHome + "//scripts");
+		this.setUserDataPath(this.crazyMonkeyHome + "//userdata");
 		
 		this.listener = StreamTaskListener.fromStdout();
 		this.channel = new LocalChannel(Executors.newCachedThreadPool());
@@ -159,7 +162,6 @@ public class CrazyMonkeyBuild {
             }
         }
         return allocated;
-        
 	}
 	
 	public String getCrazyMonkeyHome() {
@@ -317,5 +319,13 @@ public class CrazyMonkeyBuild {
 
 	public void setConfigPhoneDelay(int configPhoneDelay) {
 		this.configPhoneDelay = configPhoneDelay;
+	}
+
+	public String getUserDataPath() {
+		return userDataPath;
+	}
+
+	public void setUserDataPath(String userDataPath) {
+		this.userDataPath = userDataPath;
 	}
 }

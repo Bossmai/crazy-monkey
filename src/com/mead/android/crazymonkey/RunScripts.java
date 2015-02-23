@@ -463,7 +463,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		}
 		
 		List<String> args = new ArrayList<String>();
-		args.add(build.getCrazyMonkeyHome() + "//userdata//" + task.getAppRunner().getAppId() + "//backup.ab");
+		args.add(build.getUserDataPath() + "//" + task.getAppRunner().getAppId() + "//backup.ab");
 		
 		String androidToolsDir = "";
 		if (androidSdk.hasKnownRoot()) {
@@ -475,10 +475,9 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		} else {
 			androidToolsDir = "";
 		}
+		
 		args.add(androidToolsDir);
-		
 		Builder builder = this.getBuilder(script, args);
-		
 		boolean result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
 		if (!result) {
 			log(logger, String.format("Restore the apk bakcup '%s' failed.", script));
@@ -490,7 +489,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 	}
 
 	private void writeDeviceTxt() throws IOException, FileNotFoundException, JsonGenerationException, JsonMappingException {
-		File f = new File(build.getCrazyMonkeyHome() + "//userdata//xposeDevice.txt");
+		File f = new File(build.getUserDataPath()+ "//xposeDevice.txt");
 		f.getParentFile().mkdirs();
 		f.createNewFile();
 		FileOutputStream file = new FileOutputStream(f);
