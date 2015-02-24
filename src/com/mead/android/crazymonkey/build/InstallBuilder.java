@@ -72,7 +72,7 @@ public class InstallBuilder extends Builder {
 
 	public static Builder getInstance(Task task) {
 		AppRunner appRunner = task.getAppRunner();
-		Builder builder = new InstallBuilder(appRunner.getAppId(), true, false);
+		Builder builder = new InstallBuilder(appRunner.getAppId(), false, false);
 		return builder;
 	}
 

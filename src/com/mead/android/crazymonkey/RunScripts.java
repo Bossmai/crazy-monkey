@@ -463,6 +463,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		}
 		
 		List<String> args = new ArrayList<String>();
+		args.add(context.getSerial());
 		args.add(build.getUserDataPath() + "//" + task.getAppRunner().getAppId() + "//backup.ab");
 		
 		String androidToolsDir = "";
@@ -665,7 +666,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         // Even if the emulator has started, we generally need to wait longer before the lock
         // screen is up and ready to accept key presses.
         // The delay here is a function of boot time, i.e. relative to the slowness of the host
-        Thread.sleep(bootDuration / 4);
+        Thread.sleep(bootDuration / 2);
 
         log(logger, Messages.UNLOCKING_SCREEN());
         final String keyEventArgs = String.format("-s %s shell input keyevent %%d", emu.getSerial());

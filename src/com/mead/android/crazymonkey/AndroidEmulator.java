@@ -42,7 +42,7 @@ public class AndroidEmulator {
 
 	
 	public AndroidEmulator() {
-		this("Android_monkey_1", "android-17", "160", "HVGA", "en_US", "100M", false, true, false, "-partition-size 300", "armeabi-v7a",
+		this("Android_monkey_1", "android-17", "160", "HVGA", "en_US", "10M", true, true, false, "-partition-size 300", "armeabi-v7a",
 				"D://tools//Android//android-sdk", "", "");
 	}
 
