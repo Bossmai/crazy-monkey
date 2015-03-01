@@ -77,9 +77,11 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 			log(logger, String.format("Failed to intsall the apk '%s'.", task.getAppRunner().getAppId()));
 			task.setStatus(STATUS.FAILURE);
 		} else {
+			/*
 			if (task.getAppRunner().getScriptType().equals("Alive")) {
 				restoreBackup();
 			}
+			*/
 			runScripts();
 		}
         tearDown();

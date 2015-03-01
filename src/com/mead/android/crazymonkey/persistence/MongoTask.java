@@ -50,37 +50,37 @@ public class MongoTask implements TaskDAO {
 		this.build = build;
 	}
 
-	private String getRequestUrl(String slaverMac, Date date) {
+	private String getRequestUrl(String slaverMac, Date date, int numberOfEmulator) {
 		DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
 		String requestUrl = null;
 		try {
 			
-			requestUrl = String.format("%s/task/getnew?slaver.slaverMAC=%s&planExecDate=%s", build.getNodeHttpServer(),
+			requestUrl = String.format("%s/task/getnew?slaver.slaverMAC=%s&planExecDate=%s&limit=%d", build.getNodeHttpServer(),
 					URLEncoder.encode(slaverMac, StandardCharsets.UTF_8.toString()),
-					URLEncoder.encode(format.format(date), StandardCharsets.UTF_8.toString()));
+					URLEncoder.encode(format.format(date), StandardCharsets.UTF_8.toString()), numberOfEmulator);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		return requestUrl;
 	}
 
-	private String getRequestUrl(String slaverMac) {
+	private String getRequestUrl(String slaverMac, int numberOfEmulator) {
 		String requestUrl = null;
 		try {
-			requestUrl = String.format("%s/task/getnew?slaver.slaverMAC=%s", build.getNodeHttpServer(),
-					URLEncoder.encode(slaverMac, StandardCharsets.UTF_8.toString()));
+			requestUrl = String.format("%s/task/getnew?slaver.slaverMAC=%s&limit=%d", build.getNodeHttpServer(),
+					URLEncoder.encode(slaverMac, StandardCharsets.UTF_8.toString()), numberOfEmulator);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
 		return requestUrl;
 	}
 
-	private String getRequestUrl(Date date) {
+	private String getRequestUrl(Date date, int numberOfEmulator) {
 		String requestUrl = null;
 		DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
 		try {
 			requestUrl = String.format("%s/task/getnew?planExecDate=%s", build.getNodeHttpServer(),
-					URLEncoder.encode(format.format(date), StandardCharsets.UTF_8.toString()));
+					URLEncoder.encode(format.format(date), StandardCharsets.UTF_8.toString()), numberOfEmulator);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
@@ -136,14 +136,14 @@ public class MongoTask implements TaskDAO {
 	@Override
 	public List<Task> getTasks(int times, String slaverMac, Date date) {
 		// get the tasks by the slaver and the today
-		List<Task> taskList = this.getTaskList(this.getRequestUrl(slaverMac, date));
+		List<Task> taskList = this.getTaskList(this.getRequestUrl(slaverMac, date, times));
 		if (taskList == null || taskList.isEmpty()) {
 			// if the tasks of the slaver is empty, get the tasks before in this machine
-			taskList = this.getTaskList(this.getRequestUrl(slaverMac));
+			taskList = this.getTaskList(this.getRequestUrl(slaverMac, times));
 		}
 		if (taskList == null || taskList.isEmpty()) {
 			// if the tasks of the slaver is empty, get the tasks today from other machine
-			taskList = this.getTaskList(this.getRequestUrl(date));
+			taskList = this.getTaskList(this.getRequestUrl(date, times));
 		}
 		return taskList;
 	}
