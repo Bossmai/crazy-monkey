@@ -678,6 +678,8 @@ public class Utils {
 			se.printStackTrace();
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
+		} catch (Exception x) {
+			x.printStackTrace();
 		}
 		return mac;
 	}
