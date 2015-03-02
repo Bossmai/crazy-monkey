@@ -3,6 +3,7 @@ package com.mead.android.crazymonkey;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Map;
+import java.util.TreeMap;
 
 import com.mead.android.crazymonkey.process.ArgumentListBuilder;
 import com.mead.android.crazymonkey.process.LocalProc;
@@ -99,7 +100,14 @@ public class AndroidEmulatorContext {
 	 * @throws InterruptedException
 	 */
 	public ProcStarter getProcStarter() throws IOException, InterruptedException {
-		Map<String, String> buildEnvironment = System.getenv();
+		Map<String, String> buildEnvironment = new TreeMap<String, String>();
+		
+		Map<String, String> sysEnv = System.getenv();
+		
+		for (String key : sysEnv.keySet()) {
+			buildEnvironment.put(key, sysEnv.get(key));
+		}
+		
 		//buildEnvironment.put("ANDROID_ADB_SERVER_PORT", Integer.toString(adbServerPort));
 		if (sdk.hasKnownHome()) {
 			buildEnvironment.put("ANDROID_SDK_HOME", sdk.getSdkHome());
