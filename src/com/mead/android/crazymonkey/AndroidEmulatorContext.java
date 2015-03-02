@@ -108,14 +108,16 @@ public class AndroidEmulatorContext {
 			buildEnvironment.put(key, sysEnv.get(key));
 		}
 		
-		//buildEnvironment.put("ANDROID_ADB_SERVER_PORT", Integer.toString(adbServerPort));
 		if (sdk.hasKnownHome()) {
 			buildEnvironment.put("ANDROID_SDK_HOME", sdk.getSdkHome());
-			buildEnvironment.put("Path", String.format("%s/tools/lib",sdk.getSdkRoot()));
 		}
+		
 		if (Utils.isUnix()) {
 			buildEnvironment.put("LD_LIBRARY_PATH", String.format("%s/tools/lib", sdk.getSdkRoot()));
 		}
+		
+		buildEnvironment.put("CRAZY_MONKEY_HOME", build.getCrazyMonkeyHome());
+		
 		return new ProcStarter().stdout(this.getTaskListener().getLogger()).stderr(this.getTaskListener().getLogger()).envs(buildEnvironment);
 	}
 	

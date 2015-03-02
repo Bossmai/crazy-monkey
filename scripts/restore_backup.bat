@@ -1,4 +1,2 @@
-set ADB_PATH=D:\tools\Android\android-sdk\platform-tools
-set MONKEY_RUNNER_PATH=D:\tools\Android\android-sdk\tools
-%ADB_PATH%\adb -s %1 restore %2
-%MONKEY_RUNNER_PATH%\monkeyrunner D:\projects\private\crazy-monkey\scripts\restore_backup.py %1
+%ANDROID_SDK_HOME%\platform-tools\adb -s %1 restore %2
+%ANDROID_SDK_HOME%\tools\monkeyrunner %CRAZY_MONKEY_HOME%\scripts\restore_backup.py %1

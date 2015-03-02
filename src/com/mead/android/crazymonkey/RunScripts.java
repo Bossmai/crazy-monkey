@@ -91,12 +91,16 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 	public void runScripts() throws IOException, InterruptedException {
 		boolean result;
 		task.startTask();
-		String script = build.getTestScriptPath() + "//" + task.getAppRunner().getScriptName();
+		String script = build.getApkFilePath() + "//" + task.getAppRunner().getScriptName();
+		
+		if (Utils.isUnix()) {
+			script += ".sh";
+		} else {
+			script += ".bat";
+		}
 		List<String> args = new ArrayList<String>();
 		args.add(context.getSerial());
-		
 		Builder builder = getBuilder(script, args);
-		
 		result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
 		if (!result) {
 			log(logger, String.format("Run the script '%s' failed.", script));

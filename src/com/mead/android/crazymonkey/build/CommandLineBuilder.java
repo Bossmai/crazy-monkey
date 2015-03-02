@@ -41,14 +41,23 @@ public abstract class CommandLineBuilder extends Builder{
 		int r = -1;
 		try {
 			Map<String, String> buildEnvironment = new TreeMap<String, String>();
-			//buildEnvironment.put("ANDROID_ADB_SERVER_PORT", Integer.toString(adbServerPort));
+			
+			Map<String, String> sysEnv = System.getenv();
+			
+			for (String key : sysEnv.keySet()) {
+				buildEnvironment.put(key, sysEnv.get(key));
+			}
+			
 			if (androidSdk.hasKnownHome()) {
 				buildEnvironment.put("ANDROID_SDK_HOME", androidSdk.getSdkHome());
 			}
 			if (Utils.isUnix()) {
 				buildEnvironment.put("LD_LIBRARY_PATH", String.format("%s/tools/lib", androidSdk.getSdkRoot()));
 			}
-			r = new ProcStarter().cmds(buildCommandLine()).stdout(taskListener).start().join();
+			buildEnvironment.put("CRAZY_MONKEY_HOME", build.getCrazyMonkeyHome());
+			
+			r = new ProcStarter().cmds(buildCommandLine()).stdout(taskListener).envs(buildEnvironment).start().join();
+			
 		} catch (IOException e) {
 			e.printStackTrace();
 			AndroidEmulator.log(logger, String.format("Run the batch file '%s' failed.", script));
