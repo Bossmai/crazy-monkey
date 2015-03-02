@@ -33,12 +33,15 @@
 
 	<target name="clean" depends="">
 		<delete file="${build.dir}/crazy-monkey-*.jar" />
+		<delete dir="${build.dir}/bin" />
+		<mkdir dir="${build.dir}/bin" />
 	</target>
 
 	<target name="compile" depends="check-java-version">
 		<javac srcdir="${build.dir}/src" destdir="${build.dir}/bin"
-			classpathref="lib.classpath" debug="true" encoding="${javac.encoding}"
-			includeAntRuntime="false" nowarn="${javac.nowarn}" target="${ant.build.javac.target}" />
+			classpathref="lib.classpath" debug="true" encoding="UTF-8"
+			includeAntRuntime="false" nowarn="true" target="1.7" />
+		<copy file="${build.dir}/src/com/mead/android/crazymonkey/Messages.properties" todir="${build.dir}/bin/com/mead/android/crazymonkey"/>
 	</target>
 
 	<target name="check-java-version"
