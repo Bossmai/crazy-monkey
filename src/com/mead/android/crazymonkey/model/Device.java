@@ -22,19 +22,19 @@ public class Device {
 	// 产品名
 	private String PRODUCT = "takju";
 	// 系统版本
-	private String RELEASE = "4.3";
+	private String RELEASE = "4.3";	
 	// 系统版本值
 	private String SDK = "18";
 	// gprs wifi none
-	private String connect_mode = "wifi";
+	private String connect_mode = "0";
 	// 密度 1.0
 	private String density = "2.0";
-	// 160
+	// 160	
 	private String densityDpi = "320";
 	// no messages
 	private String get = "I9250XXLJ1";
 	// 无线路由器地址
-	private String getBSSID = "87-98-75-A3-D3";
+	private String getBSSID = "9c:21:6a:e0:84:ca";
 	// 序列号
 	private String getDeviceId = "351554052632941";
 	// 基站位置（需要手动更改）
@@ -44,7 +44,7 @@ public class Device {
 	// mac地址
 	private String getMacAddress = "64:c0:84:79:b7:cf";
 	// 屏幕分辨率
-	private String getMetrics = "720x1184";
+	private String getMetrics = "720x1184";	
 	// 国家iso代码
 	private String getNetworkCountryIso = "cn";
 	// 网络类型
@@ -79,7 +79,7 @@ public class Device {
 	 * NETWORK_TYPE_UMTS 3
 	 * NETWORK_TYPE_UNKNOWN 0
 	 */
-	private String getNetworkType = "8";
+	private String getNetworkType = "1";
 	// 手机类型
 	/*
 	 * PHONE_TYPE_GSM 1
@@ -90,7 +90,7 @@ public class Device {
 	private String getPhoneType = "1";
 
 	// 固件版本
-	private String getRadioVersion = "";
+	private String getRadioVersion = "I9250XXLJ1";
 	// 无线路由器名
 	private String getSSID = "home";
 	// 手机卡国家
