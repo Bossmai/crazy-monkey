@@ -8,43 +8,43 @@ public class Device {
 	// 系统架构（请保留下划线，下划线隔开的为两个数据）
 	private String ARCH = "armeabi-v7a_armeabi";
 	// 品牌
-	private String BRAND = "Huawei";
+	private String BRAND = "google";
 	// 品牌
-	private String DEVICE = "hwu8860";
+	private String DEVICE = "maguro";
 	// 指纹
-	private String FINGERPRINT = "Huawei/U8860/hwu8860\\:4.0.3/HuaweiU8860/CHNC00B923SP03\\:user/ota-rel-keys,release-keys";
+	private String FINGERPRINT = "google/takju/maguro:4.3/JWR66Y/776638:user/release-keys";
 	// 硬件
-	private String HARDWARE = "huawei";
+	private String HARDWARE = "tuna";
 	// 制造商
-	private String MANUFACTURER = "HUAWEI";
+	private String MANUFACTURER = "samsung";
 	// 型号
-	private String MODEL = "U8860";
+	private String MODEL = "Galaxy Nexus";
 	// 产品名
-	private String PRODUCT = "U8860";
+	private String PRODUCT = "takju";
 	// 系统版本
-	private String RELEASE = "4.0.3";
+	private String RELEASE = "4.3";
 	// 系统版本值
-	private String SDK = "15";
+	private String SDK = "18";
 	// gprs wifi none
 	private String connect_mode = "wifi";
 	// 密度 1.0
-	private String density = "1.0";
+	private String density = "2.0";
 	// 160
-	private String densityDpi = "160";
+	private String densityDpi = "320";
 	// no messages
-	private String get;
+	private String get = "I9250XXLJ1";
 	// 无线路由器地址
 	private String getBSSID = "87-98-75-A3-D3";
 	// 序列号
-	private String getDeviceId = "129376401254125";
+	private String getDeviceId = "351554052632941";
 	// 基站位置（需要手动更改）
-	private String getJiZhan = "";
+	private String getJiZhan = "43016_11021269";
 	// 手机号码
-	private String getLine1Number = "13908725345";
+	private String getLine1Number = "13499122278";
 	// mac地址
-	private String getMacAddress = "65-87-98-AE-E5";
+	private String getMacAddress = "64:c0:84:79:b7:cf";
 	// 屏幕分辨率
-	private String getMetrics = "320X480";
+	private String getMetrics = "720x1184";
 	// 国家iso代码
 	private String getNetworkCountryIso = "cn";
 	// 网络类型
@@ -58,7 +58,7 @@ public class Device {
 	 * 460 20 China Tietong China
 	 * 460 01 China Unicom China
 	 */
-	private String getNetworkOperator = "460000";
+	private String getNetworkOperator = "46000";
 	// 网络类型名
 	private String getNetworkOperatorName = "中国移动";
 	// 网络类型
@@ -79,7 +79,7 @@ public class Device {
 	 * NETWORK_TYPE_UMTS 3
 	 * NETWORK_TYPE_UNKNOWN 0
 	 */
-	private String getNetworkType = "1";
+	private String getNetworkType = "8";
 	// 手机类型
 	/*
 	 * PHONE_TYPE_GSM 1
@@ -87,41 +87,41 @@ public class Device {
 	 * PHONE_TYPE_SIP 3
 	 * PHONE_TYPE_CDMA 2
 	 */
-	private String getPhoneType = "2";
+	private String getPhoneType = "1";
 
 	// 固件版本
 	private String getRadioVersion = "";
 	// 无线路由器名
-	private String getSSID = "";
+	private String getSSID = "home";
 	// 手机卡国家
 	private String getSimCountryIso = "cn";
 	// 运营商
-	private String getSimOperator = "460000";
+	private String getSimOperator = "46000";
 	// 运营商名字
 	private String getSimOperatorName = "中国移动";
 	// 手机卡序列号
-	private String getSimSerialNumber = "084906003702543346";
+	private String getSimSerialNumber = "89860315331900403897";
 
 	// 手机卡状态 SIM_OK 0 SIM_NO -1 SIM_UNKNOW -2
 	private String getSimState = "0";
 	// android_id 9774d56d682e549b
-	private String getString = "9774d56d682e549b";
+	private String getString = "05ec66a01f58f1a0";
 	// IMEI
-	private String getSubscriberId = "351451208401216";
+	private String getSubscriberId = "351554052632941";
 	// gps 位置
-	private String gps = "";
+	private String gps = null;
 	// 位置模拟类型
 	private String location_mode = "0";
 	// 缩放比例
-	private String scaledDensity = "1.0";
+	private String scaledDensity = "2.0";
 	// cpu型号
-	private String setCpuName = "armeabi-v7a";
+	private String setCpuName = "Tuna";
 	// 签名
-	private String sign = "00E1BB5ED2C86A12389A1416CF963C1B";
+	private String sign = "718E95ABAA307C583CFC5A9EAA5FB73E";
 	// 横向 160.0
-	private String xdpi = "160.0";
+	private String xdpi = "315.31033";
 	// 纵向 160.0
-	private String ydpi = "160.0";
+	private String ydpi = "318.7451";
 
 	public Device() {
 		super();
