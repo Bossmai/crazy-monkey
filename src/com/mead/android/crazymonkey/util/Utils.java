@@ -14,11 +14,10 @@ import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Reader;
 import java.io.Writer;
-import java.net.InetAddress;
 import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
-import java.net.UnknownHostException;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -636,59 +635,39 @@ public class Utils {
     
     
 	public static String getMACAddr() {
-		String mac = "";
 		try {
-			byte[] macAddr = NetworkInterface.getByInetAddress(InetAddress.getLocalHost()).getHardwareAddress();
-			for (byte b : macAddr) {
-				if (!mac.equals("")) {
-					mac += "-";
-				}
-				mac += toHexString(b).toUpperCase();
-			}
-			/*
-			Enumeration<NetworkInterface> interfaceList = NetworkInterface.getNetworkInterfaces();
-			if (interfaceList != null) {
-				while (interfaceList.hasMoreElements()) {
-					NetworkInterface iface = interfaceList.nextElement();
-					Enumeration<InetAddress> addrList = iface.getInetAddresses();
-					if (iface.isUp() && !iface.isLoopback() && !iface.isVirtual()) {
-						
-						while (addrList.hasMoreElements()) {
-							InetAddress address = addrList.nextElement();
-							if (address instanceof Inet4Address) {
-								System.out.println("ip: " + address.getHostAddress());
-							}
-							
-							mac = "";
-							byte[] macAddr = NetworkInterface.getByInetAddress(InetAddress.getByName(address.getHostAddress())).getHardwareAddress();
-							for (byte b : macAddr) {
-								if (!mac.equals("")) {
-									mac += "-";
-								}
-								mac += toHexString(b).toUpperCase();
-							}
-							System.out.println("mac:" + mac);
-							
-						}
+			String firstInterface = null;
+			Map<String, String> addressByNetwork = new HashMap<>();
+			Enumeration<NetworkInterface> networkInterfaces = NetworkInterface.getNetworkInterfaces();
+
+			while (networkInterfaces.hasMoreElements()) {
+				NetworkInterface network = networkInterfaces.nextElement();
+
+				byte[] bmac = network.getHardwareAddress();
+				if (bmac != null) {
+					StringBuilder sb = new StringBuilder();
+					for (int i = 0; i < bmac.length; i++) {
+						sb.append(String.format("%02X%s", bmac[i], (i < bmac.length - 1) ? "-" : ""));
+					}
+
+					if (sb.toString().isEmpty() == false) {
+						addressByNetwork.put(network.getName(), sb.toString());
+						System.out.println("Address = " + sb.toString() + " @ [" + network.getName() + "] " + network.getDisplayName());
+					}
+
+					if (sb.toString().isEmpty() == false && firstInterface == null) {
+						firstInterface = network.getName();
 					}
 				}
 			}
-			*/
+			if (firstInterface != null) {
+				return addressByNetwork.get(firstInterface);
+			}
 		} catch (SocketException se) {
 			se.printStackTrace();
-		} catch (UnknownHostException e) {
-			e.printStackTrace();
 		} catch (Exception x) {
 			x.printStackTrace();
 		}
-		return mac;
-	}
-
-	private static String toHexString(int integer) {
-		String str = Integer.toHexString((int) (integer & 0xff));
-		if (str.length() == 1) {
-			str = "0" + str;
-		}
-		return str;
+		return null;
 	}
 }
