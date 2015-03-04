@@ -35,7 +35,7 @@ public class Device {
 	private String get = "I9250XXLJ1";
 	// 无线路由器地址
 	private String getBSSID = "9c:21:6a:e0:84:ca";
-	// 序列号
+	// IMEI
 	private String getDeviceId = "351554052632941";
 	// 基站位置（需要手动更改）
 	private String getJiZhan = "43016_11021269";
@@ -106,8 +106,8 @@ public class Device {
 	private String getSimState = "0";
 	// android_id 9774d56d682e549b
 	private String getString = "05ec66a01f58f1a0";
-	// IMEI
-	private String getSubscriberId = "351554052632941";
+	// IMSI
+	private String getSubscriberId = "460000925417854";
 	// gps 位置
 	private String gps = null;
 	// 位置模拟类型
