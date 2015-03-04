@@ -29,6 +29,11 @@
 			</manifest>
 			<fileset dir="${build.dir}/bin" />
 		</jar>
+		
+		<chmod dir="${build.dir}/apk" perm="ugo+rx" includes="**/*.sh"/>
+		<chmod dir="${build.dir}/scripts" perm="ugo+rx" includes="**/*.sh"/>
+		<chmod dir="${build.dir}/scripts" perm="ugo+rx" includes="**/*.py"/>
+		
 	</target>
 
 	<target name="clean" depends="">
