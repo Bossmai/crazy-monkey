@@ -25,7 +25,7 @@ import com.mead.android.crazymonkey.util.Utils;
 public class StartUp {
 
 	public static void main(String[] args) {
-		System.out.println("********************************************* CRAZY MONKEY *********************************************");
+		System.out.println("*************************************************** CRAZY MONKEY ***************************************************");
 		System.out.println("RUNNING...");
 		
 		BufferedWriter buildLogFile = null;
@@ -56,7 +56,7 @@ public class StartUp {
 					FileOutputStream file = getLoggerForTask(build, task);
 					cs.submit(new RunScripts(build, task, sdk, new StreamTaskListener(new BufferedOutputStream(file))));
 				}
-				System.out.println(String.format("[" + new Date() + "] - The monkey task '%s' has started. \r\n", task.getId()));
+				System.out.print(String.format("[" + new Date() + "] - The monkey task '%s' has started. \r\n", task.getId()));
 			}
 			buildLogFile = getLoggerForBuild(build);
 			for (int i = 0; i < tasks.size(); i++) {
@@ -68,7 +68,7 @@ public class StartUp {
 						task.getId(), task.getStatus(), executeTime);
 				taskDAO.updateTask(task);
 				buildLogFile.append(result);
-				System.out.println(result);
+				System.out.print(result);
 			}
 			
 		} catch (InterruptedException ie) {
@@ -88,7 +88,7 @@ public class StartUp {
 			}
 			threadPool.shutdown();
 		}
-		System.out.println("********************************************* MONKEY RESTS *********************************************");
+		System.out.println("*************************************************** MONKEY RESTS ***************************************************");
 		System.exit(0);
 	}
 
