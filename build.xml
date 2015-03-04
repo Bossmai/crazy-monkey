@@ -32,7 +32,6 @@
 		
 		<chmod dir="${build.dir}/apk" perm="ugo+rx" includes="**/*.sh"/>
 		<chmod dir="${build.dir}/scripts" perm="ugo+rx" includes="**/*.sh"/>
-		<chmod dir="${build.dir}/scripts" perm="ugo+rx" includes="**/*.py"/>
 		
 	</target>
 

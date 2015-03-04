@@ -1,6 +1,7 @@
 package com.mead.android.crazymonkey.model;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Device {
@@ -127,330 +128,412 @@ public class Device {
 		super();
 	}
 	
+	@JsonProperty("ARCH")
 	public String getARCH() {
 		return ARCH;
 	}
 
+	@JsonProperty("ARCH")
 	public void setARCH(String aRCH) {
 		ARCH = aRCH;
 	}
 
+	@JsonProperty("BRAND")
 	public String getBRAND() {
 		return BRAND;
 	}
 
+	@JsonProperty("BRAND")
 	public void setBRAND(String bRAND) {
 		BRAND = bRAND;
 	}
 
+	@JsonProperty("DEVICE")
 	public String getDEVICE() {
 		return DEVICE;
 	}
 
+	@JsonProperty("DEVICE")
 	public void setDEVICE(String dEVICE) {
 		DEVICE = dEVICE;
 	}
 
+	@JsonProperty("FINGERPRINT")
 	public String getFINGERPRINT() {
 		return FINGERPRINT;
 	}
 
+	@JsonProperty("FINGERPRINT")
 	public void setFINGERPRINT(String fINGERPRINT) {
 		FINGERPRINT = fINGERPRINT;
 	}
 
+	@JsonProperty("HARDWARE")
 	public String getHARDWARE() {
 		return HARDWARE;
 	}
 
+	@JsonProperty("HARDWARE")
 	public void setHARDWARE(String hARDWARE) {
 		HARDWARE = hARDWARE;
 	}
 
+	@JsonProperty("MANUFACTURER")
 	public String getMANUFACTURER() {
 		return MANUFACTURER;
 	}
 
+	@JsonProperty("MANUFACTURER")
 	public void setMANUFACTURER(String mANUFACTURER) {
 		MANUFACTURER = mANUFACTURER;
 	}
 
+	@JsonProperty("MODEL")
 	public String getMODEL() {
 		return MODEL;
 	}
 
+	@JsonProperty("MODEL")
 	public void setMODEL(String mODEL) {
 		MODEL = mODEL;
 	}
 
+	@JsonProperty("PRODUCT")
 	public String getPRODUCT() {
 		return PRODUCT;
 	}
 
+	@JsonProperty("PRODUCT")
 	public void setPRODUCT(String pRODUCT) {
 		PRODUCT = pRODUCT;
 	}
 
+	@JsonProperty("RELEASE")
 	public String getRELEASE() {
 		return RELEASE;
 	}
 
+	@JsonProperty("RELEASE")
 	public void setRELEASE(String rELEASE) {
 		RELEASE = rELEASE;
 	}
 
+	@JsonProperty("SDK")
 	public String getSDK() {
 		return SDK;
 	}
 
+	@JsonProperty("SDK")
 	public void setSDK(String sDK) {
 		SDK = sDK;
 	}
 
+	@JsonProperty("connect_mode")
 	public String getConnect_mode() {
 		return connect_mode;
 	}
 
+	@JsonProperty("connect_mode")
 	public void setConnect_mode(String connect_mode) {
 		this.connect_mode = connect_mode;
 	}
 
+	@JsonProperty("density")
 	public String getDensity() {
 		return density;
 	}
 
+	@JsonProperty("density")
 	public void setDensity(String density) {
 		this.density = density;
 	}
 
+	@JsonProperty("densityDpi")
 	public String getDensityDpi() {
 		return densityDpi;
 	}
 
+	@JsonProperty("densityDpi")
 	public void setDensityDpi(String densityDpi) {
 		this.densityDpi = densityDpi;
 	}
 
+	@JsonProperty("get")
 	public String getGet() {
 		return get;
 	}
 
+	@JsonProperty("get")
 	public void setGet(String get) {
 		this.get = get;
 	}
 
+	@JsonProperty("getBSSID")
 	public String getGetBSSID() {
 		return getBSSID;
 	}
 
+	@JsonProperty("getBSSID")
 	public void setGetBSSID(String getBSSID) {
 		this.getBSSID = getBSSID;
 	}
 
+	@JsonProperty("getDeviceId")
 	public String getGetDeviceId() {
 		return getDeviceId;
 	}
 
+	@JsonProperty("getDeviceId")
 	public void setGetDeviceId(String getDeviceId) {
 		this.getDeviceId = getDeviceId;
 	}
 
+	@JsonProperty("getJiZhan")
 	public String getGetJiZhan() {
 		return getJiZhan;
 	}
 
+	@JsonProperty("getJiZhan")
 	public void setGetJiZhan(String getJiZhan) {
 		this.getJiZhan = getJiZhan;
 	}
 
+	@JsonProperty("getLine1Number")
 	public String getGetLine1Number() {
 		return getLine1Number;
 	}
 
+	@JsonProperty("getLine1Number")
 	public void setGetLine1Number(String getLine1Number) {
 		this.getLine1Number = getLine1Number;
 	}
 
+	@JsonProperty("getMacAddress")
 	public String getGetMacAddress() {
 		return getMacAddress;
 	}
 
+	@JsonProperty("getMacAddress")
 	public void setGetMacAddress(String getMacAddress) {
 		this.getMacAddress = getMacAddress;
 	}
 
+	@JsonProperty("getMetrics")
 	public String getGetMetrics() {
 		return getMetrics;
 	}
 
+	@JsonProperty("getMetrics")
 	public void setGetMetrics(String getMetrics) {
 		this.getMetrics = getMetrics;
 	}
 
+	@JsonProperty("getNetworkCountryIso")
 	public String getGetNetworkCountryIso() {
 		return getNetworkCountryIso;
 	}
 
+	@JsonProperty("getNetworkCountryIso")
 	public void setGetNetworkCountryIso(String getNetworkCountryIso) {
 		this.getNetworkCountryIso = getNetworkCountryIso;
 	}
 
+	@JsonProperty("getNetworkOperator")
 	public String getGetNetworkOperator() {
 		return getNetworkOperator;
 	}
 
+	@JsonProperty("getNetworkOperator")
 	public void setGetNetworkOperator(String getNetworkOperator) {
 		this.getNetworkOperator = getNetworkOperator;
 	}
 
+	@JsonProperty("getNetworkOperatorName")
 	public String getGetNetworkOperatorName() {
 		return getNetworkOperatorName;
 	}
 
+	@JsonProperty("getNetworkOperatorName")
 	public void setGetNetworkOperatorName(String getNetworkOperatorName) {
 		this.getNetworkOperatorName = getNetworkOperatorName;
 	}
 
+	@JsonProperty("getNetworkType")
 	public String getGetNetworkType() {
 		return getNetworkType;
 	}
 
+	@JsonProperty("getNetworkType")
 	public void setGetNetworkType(String getNetworkType) {
 		this.getNetworkType = getNetworkType;
 	}
 
+	@JsonProperty("getPhoneType")
 	public String getGetPhoneType() {
 		return getPhoneType;
 	}
 
+	@JsonProperty("getPhoneType")
 	public void setGetPhoneType(String getPhoneType) {
 		this.getPhoneType = getPhoneType;
 	}
 
+	@JsonProperty("getRadioVersion")
 	public String getGetRadioVersion() {
 		return getRadioVersion;
 	}
 
+	@JsonProperty("getRadioVersion")
 	public void setGetRadioVersion(String getRadioVersion) {
 		this.getRadioVersion = getRadioVersion;
 	}
 
+	@JsonProperty("getSSID")
 	public String getGetSSID() {
 		return getSSID;
 	}
 
+	@JsonProperty("getSSID")
 	public void setGetSSID(String getSSID) {
 		this.getSSID = getSSID;
 	}
 
+	@JsonProperty("getSimCountryIso")
 	public String getGetSimCountryIso() {
 		return getSimCountryIso;
 	}
 
+	@JsonProperty("getSimCountryIso")
 	public void setGetSimCountryIso(String getSimCountryIso) {
 		this.getSimCountryIso = getSimCountryIso;
 	}
 
+	@JsonProperty("getSimOperator")
 	public String getGetSimOperator() {
 		return getSimOperator;
 	}
 
+	@JsonProperty("getSimOperator")
 	public void setGetSimOperator(String getSimOperator) {
 		this.getSimOperator = getSimOperator;
 	}
 
+	@JsonProperty("getSimOperatorName")
 	public String getGetSimOperatorName() {
 		return getSimOperatorName;
 	}
 
+	@JsonProperty("getSimOperatorName")
 	public void setGetSimOperatorName(String getSimOperatorName) {
 		this.getSimOperatorName = getSimOperatorName;
 	}
 
+	@JsonProperty("getSimSerialNumber")
 	public String getGetSimSerialNumber() {
 		return getSimSerialNumber;
 	}
 
+	@JsonProperty("getSimSerialNumber")
 	public void setGetSimSerialNumber(String getSimSerialNumber) {
 		this.getSimSerialNumber = getSimSerialNumber;
 	}
 
+	@JsonProperty("getSimState")
 	public String getGetSimState() {
 		return getSimState;
 	}
 
+	@JsonProperty("getSimState")
 	public void setGetSimState(String getSimState) {
 		this.getSimState = getSimState;
 	}
 
+	@JsonProperty("getString")
 	public String getGetString() {
 		return getString;
 	}
 
+	@JsonProperty("getString")
 	public void setGetString(String getString) {
 		this.getString = getString;
 	}
 
+	@JsonProperty("getSubscriberId")
 	public String getGetSubscriberId() {
 		return getSubscriberId;
 	}
 
+	@JsonProperty("getSubscriberId")
 	public void setGetSubscriberId(String getSubscriberId) {
 		this.getSubscriberId = getSubscriberId;
 	}
 
+	@JsonProperty("gps")
 	public String getGps() {
 		return gps;
 	}
 
+	@JsonProperty("gps")
 	public void setGps(String gps) {
 		this.gps = gps;
 	}
 
+	@JsonProperty("location_mode")
 	public String getLocation_mode() {
 		return location_mode;
 	}
 
+	@JsonProperty("location_mode")
 	public void setLocation_mode(String location_mode) {
 		this.location_mode = location_mode;
 	}
 
+	@JsonProperty("scaledDensity")
 	public String getScaledDensity() {
 		return scaledDensity;
 	}
 
+	@JsonProperty("scaledDensity")
 	public void setScaledDensity(String scaledDensity) {
 		this.scaledDensity = scaledDensity;
 	}
 
+	@JsonProperty("setCpuName")
 	public String getSetCpuName() {
 		return setCpuName;
 	}
 
+	@JsonProperty("setCpuName")
 	public void setSetCpuName(String setCpuName) {
 		this.setCpuName = setCpuName;
 	}
 
+	@JsonProperty("sign")
 	public String getSign() {
 		return sign;
 	}
 
+	@JsonProperty("sign")
 	public void setSign(String sign) {
 		this.sign = sign;
 	}
 
+	@JsonProperty("xdpi")
 	public String getXdpi() {
 		return xdpi;
 	}
 
+	@JsonProperty("xdpi")
 	public void setXdpi(String xdpi) {
 		this.xdpi = xdpi;
 	}
 
+	@JsonProperty("ydpi")
 	public String getYdpi() {
 		return ydpi;
 	}
 
+	@JsonProperty("ydpi")
 	public void setYdpi(String ydpi) {
 		this.ydpi = ydpi;
 	}

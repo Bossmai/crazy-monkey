@@ -2,6 +2,9 @@ package com.mead.android.crazymonkey.model;
 
 import java.io.Serializable;
 
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class HardwareProperty implements Serializable {
 
 	private static final long serialVersionUID = 1L;

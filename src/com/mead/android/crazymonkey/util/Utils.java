@@ -73,20 +73,21 @@ public class Utils {
 	public static File getCrazyMonkeyHomeDirectory(String crazyMonkeyHome) {
 		String homeDirPath = System.getenv("CRAZY_MONKEY_HOME");
 
-		if (homeDirPath == null && crazyMonkeyHome != null) {
-			return new File(crazyMonkeyHome);
-		} else if (!isWindows()) {
-			homeDirPath = System.getenv("HOME");
-			if (homeDirPath == null) {
-				homeDirPath = "/tmp";
-			}
-		} else {
-			homeDirPath = System.getenv("USERPROFILE");
-			if (homeDirPath == null) {
-				homeDirPath = System.getProperty("user.home");
+		if (homeDirPath == null) {
+			if (crazyMonkeyHome != null) {
+				homeDirPath = crazyMonkeyHome;
+			} else if (!isWindows()) {
+				homeDirPath = System.getenv("HOME");
+				if (homeDirPath == null) {
+					homeDirPath = "/tmp";
+				}
+			} else {
+				homeDirPath = System.getenv("USERPROFILE");
+				if (homeDirPath == null) {
+					homeDirPath = System.getProperty("user.home");
+				}
 			}
 		}
-
 		return new File(homeDirPath);
 	}
 
@@ -652,7 +653,7 @@ public class Utils {
 
 					if (sb.toString().isEmpty() == false) {
 						addressByNetwork.put(network.getName(), sb.toString());
-						System.out.println("Address = " + sb.toString() + " @ [" + network.getName() + "] " + network.getDisplayName());
+						//System.out.println("Address = " + sb.toString() + " @ [" + network.getName() + "] " + network.getDisplayName());
 					}
 
 					if (sb.toString().isEmpty() == false && firstInterface == null) {
