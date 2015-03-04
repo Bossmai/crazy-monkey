@@ -56,13 +56,12 @@ public class CrazyMonkeyBuild {
     public static final int KILL_PROCESS_TIMEOUT_MS = 10 * 1000;
 	
 	public CrazyMonkeyBuild() throws IOException {
-		// get the properties from properties file
-		File configFile = new File(".", "config.ini");
-		
-		Map<String, String> config = Utils.parseConfigFile(configFile);
 		File crazyMonkeyFile = Utils.getCrazyMonkeyHomeDirectory(".");
-		
 		this.setCrazyMonkeyHome(crazyMonkeyFile.getAbsolutePath());
+		
+		// get the properties from properties file
+		File configFile = new File(this.getCrazyMonkeyHome(), "config.ini");
+		Map<String, String> config = Utils.parseConfigFile(configFile);
 		this.setAndroidSdkHome(config.get("android.sdk.home"));
 		this.setAndroidRootHome(config.get("android.sdk.root"));
 		
