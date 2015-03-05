@@ -32,7 +32,7 @@ public class Task {
 
 	private AppRunner appRunner;
 	
-	private Date createTime;
+	private String createTime;
 
 	private Date assignTime;
 
@@ -55,7 +55,7 @@ public class Task {
 		return assignTime;
 	}
 
-	public Date getCreateTime() {
+	public String getCreateTime() {
 		return createTime;
 	}
 
@@ -113,7 +113,7 @@ public class Task {
 		this.assignTime = assignTime;
 	}
 
-	public void setCreateTime(Date createTime) {
+	public void setCreateTime(String createTime) {
 		this.createTime = createTime;
 	}
 
