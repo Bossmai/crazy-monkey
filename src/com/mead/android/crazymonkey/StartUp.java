@@ -25,7 +25,7 @@ import com.mead.android.crazymonkey.util.Utils;
 public class StartUp {
 
 	public static void main(String[] args) {
-		System.out.println("*************************************************** CRAZY MONKEY ***************************************************");
+		System.out.println("------------------- CRAZY MONKEY -------------------");
 		System.out.println("RUNNING...");
 		
 		BufferedWriter buildLogFile = null;
@@ -88,7 +88,7 @@ public class StartUp {
 			}
 			threadPool.shutdown();
 		}
-		System.out.println("*************************************************** MONKEY RESTS ***************************************************");
+		System.out.println("------------------- MONKEY RESTS -------------------");
 		System.exit(0);
 	}
 
