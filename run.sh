@@ -6,6 +6,7 @@ export JRE_HOME=$JAVA_HOME/jre
 export CLASSPATH=.:$JAVA_HOME/lib:$JRE_HOME/lib:$CLASSPATH
 export ANT_HOME=$USER_HOME/crazy-monkey/apache-ant-1.9.4
 
+export VPN_CLINET_HOME=$USER_HOME/crazy-monkey/vpn-client
 export ANDROID_SDK_HOME=$USER_HOME/crazy-monkey/android-sdk-linux
 export CRAZY_MONKEY_HOME=$USER_HOME/crazy-monkey/crazy-monkey
 
@@ -24,6 +25,9 @@ cd $CRAZY_MONKEY_HOME
 $ANT_HOME/bin/ant
 
 # Run VPN
+$VPN_CLINET_HOME/autorun &
+
+sleep 25
 
 # Run the testing
 $JAVA_HOME/bin/java -jar $CRAZY_MONKEY_HOME/crazy-monkey-0.1.jar
