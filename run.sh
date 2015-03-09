@@ -25,6 +25,8 @@ cd $CRAZY_MONKEY_HOME
 $ANT_HOME/bin/ant
 
 # Run VPN
+sudo chmod -R 755 $VPN_CLINET_HOME
+
 $VPN_CLINET_HOME/autorun &
 
 sleep 25
