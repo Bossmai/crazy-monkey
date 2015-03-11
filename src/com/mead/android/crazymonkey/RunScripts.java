@@ -534,12 +534,22 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
             log(logger, Messages.DELAYING_START_UP(delaySecs));
             Thread.sleep(delaySecs * 1000);
         }
-
-        int[] ports = build.getNextPorts();
-        if (ports == null) {
-        	log(logger, "There is no available ports for the emulator");
-        	return null;
-        }
+        
+        int[] ports = new int[2];
+        ports[0] = 0;
+        ports[1] = 0;
+        
+        int maxTryNum = 10;
+        int tryNum = 0;
+		do {
+			tryNum++;
+			ports = build.getNextPorts();
+		} while ((ports[0] == 0 || ports[1] == 0) && tryNum < maxTryNum);
+		
+		if (tryNum == maxTryNum) {
+			log(logger, "There is no available ports for the emulator.");
+			return null;
+		}
         
         final AndroidEmulatorContext emu = new AndroidEmulatorContext(build, ports, androidSdk, taskListener);
         this.setContext(emu);
