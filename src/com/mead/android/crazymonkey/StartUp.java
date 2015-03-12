@@ -1,6 +1,5 @@
 package com.mead.android.crazymonkey;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -54,7 +53,7 @@ public class StartUp {
 					cs.submit(new RunScripts(build, task, sdk, StreamTaskListener.fromStdout()));
 				} else {
 					FileOutputStream file = getLoggerForTask(build, task);
-					cs.submit(new RunScripts(build, task, sdk, new StreamTaskListener(new BufferedOutputStream(file))));
+					cs.submit(new RunScripts(build, task, sdk, new StreamTaskListener(file)));
 				}
 				System.out.print(String.format("[" + new Date() + "] - The monkey task '%s' has started. \r\n", task.getId()));
 			}
