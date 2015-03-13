@@ -68,28 +68,30 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		
 		Thread.sleep(build.getConfigPhoneDelay() * 1000);
 		
-		configPhoneInfo();
-		
-		Builder installBuilder = InstallBuilder.getInstance(task);
-		boolean result = installBuilder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
-		
-		if (!result) {
-			log(logger, String.format("Failed to intsall the apk '%s'.", task.getAppRunner().getAppId()));
-			task.setStatus(STATUS.FAILURE);
-		} else {
-			/*
-			if (task.getAppRunner().getScriptType().equals("Alive")) {
-				restoreBackup();
+		boolean configPhoneSuccess = configPhoneInfo();
+		if (configPhoneSuccess) {
+			
+			Builder installBuilder = InstallBuilder.getInstance(task);
+			boolean result = installBuilder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Success");
+			
+			if (!result) {
+				log(logger, String.format("Failed to intsall the apk '%s'.", task.getAppRunner().getAppId()));
+				task.setStatus(STATUS.FAILURE);
+			} else {
+				/*
+				if (task.getAppRunner().getScriptType().equals("Alive")) {
+					restoreBackup();
+				}
+				*/
+				runScripts();
 			}
-			*/
-			runScripts();
 		}
         tearDown();
 		return task;
 	}
 
-	public void runScripts() throws IOException, InterruptedException {
-		boolean result;
+	public boolean runScripts() throws IOException, InterruptedException {
+		boolean result = false;
 		task.startTask();
 		String script = build.getApkFilePath() + "//" + task.getAppRunner().getScriptName();
 		
@@ -98,10 +100,13 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		} else {
 			script += ".bat";
 		}
+		
 		List<String> args = new ArrayList<String>();
 		args.add(context.getSerial());
+		
 		Builder builder = getBuilder(script, args);
-		result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
+		result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Monkey success.");
+		
 		if (!result) {
 			log(logger, String.format("Run the script '%s' failed.", script));
 			task.compelteTask(STATUS.FAILURE);
@@ -109,6 +114,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 			log(logger, String.format("Run the script '%s' scussfully.", script));
 			task.compelteTask(STATUS.SUCCESS);
 		}
+		return result;
 	}
 
 	public Builder getBuilder(String script, List<String> args) {
@@ -417,7 +423,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		return;
 	}
 	
-	public synchronized void configPhoneInfo() throws IOException, InterruptedException {
+	public synchronized boolean configPhoneInfo() throws IOException, InterruptedException {
 		
 		if (logger == null) {
 			logger = taskListener.getLogger();
@@ -447,14 +453,14 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		
 		Builder builder = this.getBuilder(script, args);
 		
-		boolean result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
+		boolean result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "OK (1 test)");
 		if (!result) {
 			log(logger, String.format("Config the phone information '%s' failed.", script));
 			task.setStatus(STATUS.NOT_BUILT);
 		} else {
 			log(logger, String.format("Config the phone information '%s' scussfully.", script));
 		}
-		return;
+		return result;
 	}
 	
 	public synchronized void restoreBackup() throws IOException, InterruptedException {
@@ -485,7 +491,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		
 		args.add(androidToolsDir);
 		Builder builder = this.getBuilder(script, args);
-		boolean result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener);
+		boolean result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Success");
 		if (!result) {
 			log(logger, String.format("Restore the apk bakcup '%s' failed.", script));
 			task.setStatus(STATUS.NOT_BUILT);

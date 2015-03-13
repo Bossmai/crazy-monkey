@@ -1,5 +1,6 @@
 package com.mead.android.crazymonkey.build;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
@@ -11,6 +12,7 @@ import com.mead.android.crazymonkey.AndroidEmulator;
 import com.mead.android.crazymonkey.AndroidEmulatorContext;
 import com.mead.android.crazymonkey.CrazyMonkeyBuild;
 import com.mead.android.crazymonkey.StreamTaskListener;
+import com.mead.android.crazymonkey.process.ForkOutputStream;
 import com.mead.android.crazymonkey.process.ProcStarter;
 import com.mead.android.crazymonkey.sdk.AndroidSdk;
 import com.mead.android.crazymonkey.util.Utils;
@@ -29,7 +31,7 @@ public abstract class CommandLineBuilder extends Builder{
 	public abstract String[] buildCommandLine();
 	
 	public boolean perform(CrazyMonkeyBuild build, AndroidSdk androidSdk, AndroidEmulator emulator, AndroidEmulatorContext emuContext,
-			StreamTaskListener taskListener) throws IOException, InterruptedException {
+			StreamTaskListener taskListener, String successText) throws IOException, InterruptedException {
 
 		final PrintStream logger = taskListener.getLogger();
 		File file = new File(script);
@@ -38,7 +40,7 @@ public abstract class CommandLineBuilder extends Builder{
 			AndroidEmulator.log(logger, String.format("The script file '%s' is not existing.", script));
 			return false;
 		}
-		int r = -1;
+		
 		try {
 			Map<String, String> buildEnvironment = new TreeMap<String, String>();
 			
@@ -56,12 +58,22 @@ public abstract class CommandLineBuilder extends Builder{
 			}
 			buildEnvironment.put("CRAZY_MONKEY_HOME", build.getCrazyMonkeyHome());
 			
-			r = new ProcStarter().cmds(buildCommandLine()).stdout(taskListener).envs(buildEnvironment).start().join();
+			ByteArrayOutputStream emulatorOutput = new ByteArrayOutputStream();
+			ForkOutputStream emulatorLogger = new ForkOutputStream(logger, emulatorOutput);
+			
+			int r = new ProcStarter().cmds(buildCommandLine()).stdout(emulatorLogger).envs(buildEnvironment).start().join();
+			String result = emulatorOutput.toString();
+			
+			if (r == 0 && result != null && (result.contains("OK (1 test)") || result.contains("Monkey success."))) {
+				return true;
+			} else {
+				return false;
+			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();
 			AndroidEmulator.log(logger, String.format("Run the batch file '%s' failed.", script));
+			return false;
 		}
-		return r == 0;
 	}
 }

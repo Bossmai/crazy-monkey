@@ -35,7 +35,7 @@ public class InstallBuilder extends Builder {
 
 	@Override
 	public boolean perform(CrazyMonkeyBuild build, AndroidSdk androidSdk, AndroidEmulator emulator, AndroidEmulatorContext emuContext,
-			StreamTaskListener taskListener) throws IOException, InterruptedException {
+			StreamTaskListener taskListener, String successText) throws IOException, InterruptedException {
 		final PrintStream logger = taskListener.getLogger();
 		if (Utils.fixEmptyAndTrim(apkFile) == null) {
 			AndroidEmulator.log(logger, Messages.APK_NOT_SPECIFIED());

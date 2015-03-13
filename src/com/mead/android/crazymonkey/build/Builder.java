@@ -19,7 +19,7 @@ import com.mead.android.crazymonkey.util.Utils;
 
 public abstract class Builder {
 	
-	public abstract boolean perform(CrazyMonkeyBuild build, AndroidSdk androidSdk, AndroidEmulator emulator, AndroidEmulatorContext emuContext, StreamTaskListener taskListener)  throws IOException, InterruptedException;
+	public abstract boolean perform(CrazyMonkeyBuild build, AndroidSdk androidSdk, AndroidEmulator emulator, AndroidEmulatorContext emuContext, StreamTaskListener taskListener, String successText)  throws IOException, InterruptedException;
 	
 	/**
 	 * Uninstalls the Android package corresponding to the given APK file from an Android device.
