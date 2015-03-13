@@ -14,6 +14,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -64,6 +65,9 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 
 	@Override
 	public Task call() throws Exception {
+		
+		Thread.sleep(new Random(7008).nextInt(15) * 1000);
+		
 		runEmulator();
 		
 		Thread.sleep(build.getConfigPhoneDelay() * 1000);
