@@ -41,7 +41,7 @@ public class StartUp {
 
 			while (true) {
 				int activeCount = (int) ((ThreadPoolExecutor) threadPool).getActiveCount();
-				if (activeCount < build.getNumberOfEmulators()) {
+				if (activeCount >= 0 && activeCount < build.getNumberOfEmulators()) {
 					if (numberOfNoTasks != 0) {
 						long waitSeconds = (long) Math.pow(2, numberOfNoTasks);
 						String waitingMsg = String.format("[" + new Date() + "] - There are no tasks now, waiting for the tasks for %d seconds...", waitSeconds * 3);
@@ -88,7 +88,7 @@ public class StartUp {
 		canceller.schedule(new Callable<Void>() {
 			public Void call() {
 				if (!future.isDone() && !future.isCancelled()) {
-					System.out.println(String.format("[" + new Date() + "] - Cancelled the task '%s' since it's timeout in %d miniutes.", task.getId(), 30));
+					System.out.println(String.format("[" + new Date() + "] - Cancelled the task '%s' since it's timeout in %d miniutes.", task.getId(), build.getEmulatorTimeout()));
 					future.cancel(true);
 				}
 				return null;
