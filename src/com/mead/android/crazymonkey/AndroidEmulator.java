@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Date;
 import java.util.regex.Pattern;
 
 import com.mead.android.crazymonkey.model.HardwareProperty;
@@ -211,6 +212,7 @@ public class AndroidEmulator {
 
 	/** Helper method for writing to the build log in a consistent manner. */
 	public synchronized static void log(final PrintStream logger, String message, boolean indent) {
+		logger.print("[" + new Date() + "] ");
 		if (indent) {
 			message = '\t' + message.replace("\n", "\n\t");
 		} else if (message.length() > 0) {

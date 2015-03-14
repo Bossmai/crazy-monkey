@@ -12,9 +12,9 @@ import java.io.PushbackInputStream;
 import java.io.StringWriter;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 import org.codehaus.jackson.JsonGenerationException;
@@ -28,6 +28,8 @@ import com.mead.android.crazymonkey.build.RunShellBuilder;
 import com.mead.android.crazymonkey.model.HardwareProperty;
 import com.mead.android.crazymonkey.model.Task;
 import com.mead.android.crazymonkey.model.Task.STATUS;
+import com.mead.android.crazymonkey.persistence.MongoTask;
+import com.mead.android.crazymonkey.persistence.TaskDAO;
 import com.mead.android.crazymonkey.process.ArgumentListBuilder;
 import com.mead.android.crazymonkey.process.Callable;
 import com.mead.android.crazymonkey.process.ForkOutputStream;
@@ -64,33 +66,49 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 	}
 
 	@Override
-	public Task call() throws Exception {
-		
-		Thread.sleep(new Random(7008).nextInt(15) * 1000);
-		
-		runEmulator();
-		
-		Thread.sleep(build.getConfigPhoneDelay() * 1000);
-		
-		boolean configPhoneSuccess = configPhoneInfo();
-		if (configPhoneSuccess) {
+	public Task call() {
+		try {
+			// run the emulator
+			Thread.sleep((long)Math.random() * build.getNumberOfEmulators() * 1000);
+			Boolean isRunEmulatorSuccess = runEmulator();
 			
-			Builder installBuilder = InstallBuilder.getInstance(task);
-			boolean result = installBuilder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Success");
-			
-			if (!result) {
-				log(logger, String.format("Failed to intsall the apk '%s'.", task.getAppRunner().getAppId()));
-				task.setStatus(STATUS.FAILURE);
-			} else {
-				/*
-				if (task.getAppRunner().getScriptType().equals("Alive")) {
-					restoreBackup();
+			if (isRunEmulatorSuccess != null && isRunEmulatorSuccess.booleanValue()) {
+				// config the phone
+				Thread.sleep(build.getConfigPhoneDelay() * 1000);
+				boolean configPhoneSuccess = configPhoneInfo();
+				if (configPhoneSuccess) {
+					// install the apk file
+					Thread.sleep(build.getInstallApkDelay() * 1000);
+					Builder installBuilder = InstallBuilder.getInstance(task);
+					boolean result = installBuilder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Success");
+					
+					if (!result) {
+						log(logger, String.format("Failed to intsall the apk '%s'.", task.getAppRunner().getAppId()));
+						task.setStatus(STATUS.FAILURE);
+					} else {
+						/*
+						if (task.getAppRunner().getScriptType().equals("Alive")) {
+							restoreBackup();
+						}
+						*/
+						// run te script 
+						Thread.sleep(build.getRunScriptDelay() * 1000);
+						runScripts();
+					}
 				}
-				*/
-				runScripts();
+			}
+		} catch (InterruptedException | IOException e) {
+			task.setStatus(STATUS.FAILURE);
+			String msg = String.format("The task '%d' is interrputed. ", task.getAppRunner().getAppId());
+			log(logger, msg);
+			System.out.println("[" + new Date() + "]" + msg);
+		} finally {
+			try {
+				tearDown();
+			} catch (IOException | InterruptedException e) {
+				e.printStackTrace();
 			}
 		}
-        tearDown();
 		return task;
 	}
 
@@ -133,9 +151,19 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 
 	public void tearDown() throws IOException, InterruptedException {
 		cleanUp(build, task.getEmulator(), context);
-        
+		
+		TaskDAO taskDAO = new MongoTask(build);
+		taskDAO.updateTask(task);
+		
+		long executeTime = (System.currentTimeMillis() - task.getAssignTime().getTime()) / 1000;
+		String result = String.format("The monkey task '%s' has been completed %s in %d seconds. ",
+				task.getId(), task.getStatus(), executeTime);
+		
+		AndroidEmulator.log(logger,result);
         logger.flush();
         logger.close();
+        
+        System.out.println("[" + new Date() + "] - " + result);
 	}
 
 	public boolean createAvd() throws InterruptedException, EmulatorCreationException {
@@ -767,6 +795,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 
     /** Helper method for writing to the build log in a consistent manner. */
     synchronized static void log(final PrintStream logger, String message, boolean indent) {
+    	logger.print("[" + new Date() + "] ");
         if (indent) {
             message = '\t' + message.replace("\n", "\n\t");
         } else if (message.length() > 0) {

@@ -21,10 +21,8 @@ public class CrazyMonkeyBuild {
 
 	private String androidRootHome;
 
-	private int numberOfEmulators;
+	private int numberOfEmulators = 15;
 	
-	private int startUpDelay = 2;
-
 	private int startPort;
 	
 	private int endPort;
@@ -43,7 +41,15 @@ public class CrazyMonkeyBuild {
 	
 	private StreamTaskListener listener;
 	
+	private int startUpDelay = 2;
+
 	private int configPhoneDelay = 10;
+	
+	private int installApkDelay = 5;
+	
+	private int runScriptDelay = 5;
+	
+	private int emulatorTimeout = 30;
 	
 	private Set<Integer> occupiedPorts = new HashSet<Integer>();
 	
@@ -54,17 +60,19 @@ public class CrazyMonkeyBuild {
     
     /** Interval during which killing a process should complete. */
     public static final int KILL_PROCESS_TIMEOUT_MS = 10 * 1000;
-	
+    
 	public CrazyMonkeyBuild() throws IOException {
 		File crazyMonkeyFile = Utils.getCrazyMonkeyHomeDirectory(".");
 		this.setCrazyMonkeyHome(crazyMonkeyFile.getAbsolutePath());
 		
 		// get the properties from properties file
-		File configFile = new File(this.getCrazyMonkeyHome(), "config.ini");
+		File configFile = new File(this.getCrazyMonkeyHome(), "config-dev.ini");
+		if (!configFile.exists()) {
+			configFile = new File(this.getCrazyMonkeyHome(), "config.ini");
+		}
 		Map<String, String> config = Utils.parseConfigFile(configFile);
 		this.setAndroidSdkHome(config.get("android.sdk.home"));
 		this.setAndroidRootHome(config.get("android.sdk.root"));
-		
 		this.setNodeHttpServer(config.get("node.httpserver"));
 		
 		try {
@@ -91,17 +99,29 @@ public class CrazyMonkeyBuild {
 
 		}
 		
-		int numOfEmulator = 15;
-
 		try {
-			if (config.get("emulator.max_number") != null) {
-				numOfEmulator = Integer.parseInt(config.get("emulator.max_number"));
-			}
+			this.setInstallApkDelay(Integer.parseInt(config.get("emulator.install_apk_delay")));
 		} catch (NumberFormatException e) {
 
 		}
+		
+		try {
+			this.setRunScriptDelay(Integer.parseInt(config.get("emulator.run_script_delay")));
+		} catch (NumberFormatException e) {
 
-		this.setNumberOfEmulators(numOfEmulator);
+		}
+		
+		try {
+			this.setEmulatorTimeout(Integer.parseInt(config.get("emulator.timeout.minute")));
+		} catch (NumberFormatException e) {
+
+		}
+		
+		try {
+			this.setNumberOfEmulators(Integer.parseInt(config.get("emulator.max_number")));
+		} catch (NumberFormatException e) {
+
+		}
 		
 		this.setLogPath(this.crazyMonkeyHome + "//logs");
 		this.setApkFilePath(this.crazyMonkeyHome + "//apk");
@@ -326,5 +346,29 @@ public class CrazyMonkeyBuild {
 
 	public void setUserDataPath(String userDataPath) {
 		this.userDataPath = userDataPath;
+	}
+
+	public int getInstallApkDelay() {
+		return installApkDelay;
+	}
+
+	public void setInstallApkDelay(int installApkDelay) {
+		this.installApkDelay = installApkDelay;
+	}
+
+	public int getRunScriptDelay() {
+		return runScriptDelay;
+	}
+
+	public void setRunScriptDelay(int runScriptDelay) {
+		this.runScriptDelay = runScriptDelay;
+	}
+
+	public int getEmulatorTimeout() {
+		return emulatorTimeout;
+	}
+
+	public void setEmulatorTimeout(int emulatorTimeout) {
+		this.emulatorTimeout = emulatorTimeout;
 	}
 }
