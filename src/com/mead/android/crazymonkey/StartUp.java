@@ -87,8 +87,10 @@ public class StartUp {
 		ScheduledExecutorService canceller = Executors.newSingleThreadScheduledExecutor();
 		canceller.schedule(new Callable<Void>() {
 			public Void call() {
-				System.out.println(String.format("[" + new Date() + "] - Cancelled the task '%s' since it's timeout in %d miniutes.", task.getId(), 30));
-				future.cancel(true);
+				if (!future.isDone() && !future.isCancelled()) {
+					System.out.println(String.format("[" + new Date() + "] - Cancelled the task '%s' since it's timeout in %d miniutes.", task.getId(), 30));
+					future.cancel(true);
+				}
 				return null;
 			}
 		}, build.getEmulatorTimeout(), TimeUnit.MINUTES);
