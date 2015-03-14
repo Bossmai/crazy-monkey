@@ -927,8 +927,8 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 				e.printStackTrace();
 			}
         }
-        
         build.freePorts(new int[]{emu.getAdbPort(), emu.getUserPort()});
+        build.freeEmulator(emulatorConfig.getAvdName());
     }
     
     /** A task that deletes the AVD corresponding to our local state. */

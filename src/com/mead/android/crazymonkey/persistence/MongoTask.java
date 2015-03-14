@@ -37,6 +37,8 @@ public class MongoTask implements TaskDAO {
 
 	private CrazyMonkeyBuild build;
 
+	
+	
 	public CrazyMonkeyBuild getBuild() {
 		return build;
 	}
@@ -107,14 +109,12 @@ public class MongoTask implements TaskDAO {
 							for (int i = 0; i < taskList.size(); i++) {
 								Task task = taskList.get(i);
 								AndroidEmulator emulator = new AndroidEmulator();
-								emulator.setAvdName(String.format("Android_Monkey_%d", i));
+								emulator.setAvdName(String.format("%s%d", CrazyMonkeyBuild.EMULATOR_NAME_PREFIX, build.getAvailableEmualtorIndex()));
 								task.setEmulator(emulator);
-
 							}
 						}
 					}
 				}
-
 				EntityUtils.consume(entity);
 			} finally {
 				response.close();
