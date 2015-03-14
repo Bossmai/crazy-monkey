@@ -18,6 +18,11 @@ export LD_LIBRARY_PATH=$ANDROID_SDK_HOME/tools/lib
 
 export PATH=$JAVA_HOME/bin:$JRE_HOME/bin:$ANDROID_SDK_HOME/tools:$ANDROID_SDK_HOME/platform-tools:$ANT_HOME/bin:$PATH
 
+# run the vpn
+cd $VPN_CLINET_HOME
+git pull
+$VPN_CLINET_HOME/autorun
+
 # Kill the emulator process
 ps aux | grep emulator | awk '{print $2}' | xargs kill -9
 # Clean the lock file of avd
