@@ -80,7 +80,11 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 					// install the apk file
 					Thread.sleep(build.getInstallApkDelay() * 1000);
 					Builder installBuilder = InstallBuilder.getInstance(task);
-					boolean result = installBuilder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Success");
+					
+					boolean result = false;
+					synchronized (this){
+						result = installBuilder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Success");
+					}
 					
 					if (!result) {
 						log(logger, String.format("Failed to intsall the apk '%s'.", task.getAppRunner().getAppId()));
