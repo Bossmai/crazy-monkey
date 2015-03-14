@@ -39,7 +39,7 @@ public class StartUp {
 			TaskDAO taskDAO = new MongoTask(build);
 			int numberOfNoTasks = 0;
 
-			while (true && numberOfNoTasks < 10) {
+			while (true) {
 				int activeCount = (int) ((ThreadPoolExecutor) threadPool).getActiveCount();
 				if (activeCount < build.getNumberOfEmulators()) {
 					if (numberOfNoTasks != 0) {
@@ -56,7 +56,9 @@ public class StartUp {
 							assignTask(build, sdk, cs, task);
 						}
 					} else {
-						numberOfNoTasks++;
+						if (numberOfNoTasks < 5) {
+							numberOfNoTasks++;
+						}
 					}
 				}
 			}
