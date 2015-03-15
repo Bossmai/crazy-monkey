@@ -2,7 +2,7 @@
 # set the env
 
 export NETWORK_INTERFACE=eth0
-export PROJECT_HOME=$PROJECT_HOME
+export PROJECT_HOME=/home/ericchen/crazy-monkey
 
 export JAVA_HOME=$PROJECT_HOME/jdk1.7.0_75
 export ANT_HOME=$PROJECT_HOME/apache-ant-1.9.4
