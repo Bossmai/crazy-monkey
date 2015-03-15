@@ -40,7 +40,7 @@ public class StartUp {
 			int numberOfNoTasks = 0;
 
 			while (true) {
-				int activeCount = (int) ((ThreadPoolExecutor) threadPool).getTaskCount();
+				int activeCount = (int) ((ThreadPoolExecutor) threadPool).getActiveCount();
 				if (activeCount >= 0 && activeCount < build.getNumberOfEmulators()) {
 					if (numberOfNoTasks != 0) {
 						long waitSeconds = (long) Math.pow(2, numberOfNoTasks);
