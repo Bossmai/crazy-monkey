@@ -66,7 +66,7 @@ public class MongoTask implements TaskDAO {
 		return requestUrl;
 	}
 
-	private String getRequestUrl(String slaverMac, int numberOfEmulator) {
+	public String getRequestUrl(String slaverMac, int numberOfEmulator) {
 		String requestUrl = null;
 		try {
 			requestUrl = String.format("%s/task/getnew?slaver.slaverMAC=%s&limit=%d", build.getNodeHttpServer(),
@@ -77,7 +77,7 @@ public class MongoTask implements TaskDAO {
 		return requestUrl;
 	}
 
-	private String getRequestUrl(Date date, int numberOfEmulator) {
+	public String getRequestUrl(Date date, int numberOfEmulator) {
 		String requestUrl = null;
 		DateFormat format = new SimpleDateFormat("yyyy/MM/dd");
 		try {
@@ -137,6 +137,7 @@ public class MongoTask implements TaskDAO {
 	public List<Task> getTasks(int times, String slaverMac, Date date) {
 		// get the tasks by the slaver and the today
 		List<Task> taskList = this.getTaskList(this.getRequestUrl(slaverMac, date, times));
+		/*
 		if (taskList == null || taskList.isEmpty()) {
 			// if the tasks of the slaver is empty, get the tasks before in this machine
 			taskList = this.getTaskList(this.getRequestUrl(slaverMac, times));
@@ -145,6 +146,7 @@ public class MongoTask implements TaskDAO {
 			// if the tasks of the slaver is empty, get the tasks today from other machine
 			taskList = this.getTaskList(this.getRequestUrl(date, times));
 		}
+		*/
 		return taskList;
 	}
 	
