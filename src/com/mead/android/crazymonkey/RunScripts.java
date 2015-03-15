@@ -22,6 +22,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 
 import com.mead.android.crazymonkey.build.Builder;
+import com.mead.android.crazymonkey.build.InstallBuilder;
 import com.mead.android.crazymonkey.build.RunBatBuilder;
 import com.mead.android.crazymonkey.build.RunShellBuilder;
 import com.mead.android.crazymonkey.model.HardwareProperty;
@@ -77,7 +78,6 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 				boolean configPhoneSuccess = configPhoneInfo();
 				if (configPhoneSuccess) {
 					
-					/*
 					// install the apk file
 					Thread.sleep(build.getInstallApkDelay() * 1000);
 					Builder installBuilder = InstallBuilder.getInstance(task);
@@ -94,14 +94,12 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 						if (task.getAppRunner().getScriptType().equals("Alive")) {
 							restoreBackup();
 						}
-						
+						*/
 						// run te script 
 						Thread.sleep(build.getRunScriptDelay() * 1000);
 						runScripts();
 					}
-					*/
-					Thread.sleep(build.getRunScriptDelay() * 1000);
-					runScripts();
+					
 				}
 			}
 		} catch (InterruptedException | IOException e) {
