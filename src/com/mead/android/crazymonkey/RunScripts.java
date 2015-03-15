@@ -675,7 +675,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         if (!socket) {
             log(logger, Messages.EMULATOR_DID_NOT_START());
             task.setStatus(STATUS.NOT_BUILT);
-            cleanUp(build, emuConfig, emu);
+            //cleanUp(build, emuConfig, emu);
             return null;
         }
 
@@ -693,7 +693,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
             log(logger, Messages.CANNOT_CONNECT_TO_EMULATOR());
             //build.setResult(Result.NOT_BUILT);
             task.setStatus(STATUS.NOT_BUILT);
-            cleanUp(build, emuConfig, emu);
+            //cleanUp(build, emuConfig, emu);
             return null;
         }
 
@@ -713,7 +713,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
             }
             //build.setResult(Result.NOT_BUILT);
             task.setStatus(STATUS.NOT_BUILT);
-            cleanUp(build, emuConfig, emu);
+            //cleanUp(build, emuConfig, emu);
             return null;
         }
 
@@ -771,7 +771,8 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
                 boolean restarted = emu.sendCommand("avd start");
                 if (!restarted) {
                     log(logger, Messages.EMULATOR_RESUME_FAILED());
-                    cleanUp(build, emuConfig, emu);
+                    //cleanUp(build, emuConfig, emu);
+                    return null;
                 }
             } else {
                 log(logger, Messages.SNAPSHOT_CREATION_FAILED());

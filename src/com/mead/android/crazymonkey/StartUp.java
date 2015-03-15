@@ -40,7 +40,7 @@ public class StartUp {
 			int numberOfNoTasks = 0;
 
 			while (true) {
-				int activeCount = (int) ((ThreadPoolExecutor) threadPool).getActiveCount();
+				int activeCount = (int) ((ThreadPoolExecutor) threadPool).getTaskCount();
 				if (activeCount >= 0 && activeCount < build.getNumberOfEmulators()) {
 					if (numberOfNoTasks != 0) {
 						long waitSeconds = (long) Math.pow(2, numberOfNoTasks);
@@ -60,6 +60,8 @@ public class StartUp {
 							numberOfNoTasks++;
 						}
 					}
+				} else {
+					Thread.sleep(3000);
 				}
 			}
 		} catch (InterruptedException ie) {
@@ -87,9 +89,8 @@ public class StartUp {
 		ScheduledExecutorService canceller = Executors.newSingleThreadScheduledExecutor();
 		canceller.schedule(new Callable<Void>() {
 			public Void call() {
-				if (!future.isDone() && !future.isCancelled()) {
+				if (future.cancel(true)) {
 					System.out.println(String.format("[" + new Date() + "] - Cancelled the task '%s' since it's timeout in %d miniutes.", task.getId(), build.getEmulatorTimeout()));
-					future.cancel(true);
 				}
 				return null;
 			}
