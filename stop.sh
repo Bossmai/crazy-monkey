@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set the env
-/bin/bash ./setenv.sh
+source ./setenv.sh
 
 # Kill the adb
 echo "Kill the adb server"
