@@ -135,8 +135,8 @@ public class CrazyMonkeyBuild {
 		this.listener = StreamTaskListener.fromStdout();
 		this.channel = new LocalChannel(Executors.newCachedThreadPool());	
 		
-		emulators = new int[this.getNumberOfEmulators() * 2];
-		for (int i = 0; i < this.getNumberOfEmulators() * 2; i++) {
+		emulators = new int[this.getNumberOfEmulators()];
+		for (int i = 0; i < this.getNumberOfEmulators(); i++) {
 			emulators[i] = 0;
 		}
 	}
@@ -386,7 +386,7 @@ public class CrazyMonkeyBuild {
 	}
 	
 	public synchronized int getAvailableEmualtorIndex() {
-		for (int i = 0; i < this.numberOfEmulators * 2; i++) {
+		for (int i = 0; i < this.numberOfEmulators; i++) {
 			if (this.emulators[i] == 0) {
 				this.emulators[i] = 1;
 				return i;
@@ -399,6 +399,16 @@ public class CrazyMonkeyBuild {
 		if (i >= 0 && i < this.emulators.length) {
 			this.emulators[i] = 0;
 		}
+	}
+	
+	public synchronized int getActiveEmulatorCount () {
+		int count = 0;
+		for (int i = 0; i < this.numberOfEmulators; i++) {
+			if (this.emulators[i] == 1) {
+				count++;
+			}
+		}
+		return count;
 	}
 	
 	public synchronized void freeEmulator (String emulatorName) {

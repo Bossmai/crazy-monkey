@@ -13,7 +13,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 import com.mead.android.crazymonkey.model.Task;
@@ -40,7 +39,7 @@ public class StartUp {
 			int numberOfNoTasks = 0;
 
 			while (true) {
-				int activeCount = (int) ((ThreadPoolExecutor) threadPool).getActiveCount();
+				int activeCount = build.getActiveEmulatorCount();
 				if (activeCount >= 0 && activeCount < build.getNumberOfEmulators()) {
 					if (numberOfNoTasks != 0) {
 						long waitSeconds = (long) Math.pow(2, numberOfNoTasks);
@@ -61,6 +60,7 @@ public class StartUp {
 						}
 					}
 				} 
+				Thread.sleep(10000);
 			}
 		} catch (InterruptedException ie) {
 			ie.printStackTrace();
