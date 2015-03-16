@@ -66,8 +66,8 @@ public class CrazyMonkeyBuild {
     public static final String EMULATOR_NAME_PREFIX = "Android_Monkey_";
     
     static {
-		emulators = new int[15];
-		for (int i = 0; i < 15; i++) {
+		emulators = new int[25];
+		for (int i = 0; i < 25; i++) {
 			emulators[i] = 0;
 		}
 	}
