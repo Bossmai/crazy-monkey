@@ -39,9 +39,6 @@ public class StartUp {
 			int numberOfNoTasks = 0;
 
 			while (true) {
-				
-				System.out.println("Active Count = " + build.getActiveEmulatorCount());
-				
 				int activeCount = build.getActiveEmulatorCount();
 				if (activeCount >= 0 && activeCount < build.getNumberOfEmulators()) {
 					if (numberOfNoTasks != 0) {
