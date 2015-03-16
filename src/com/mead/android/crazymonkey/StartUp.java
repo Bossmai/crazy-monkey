@@ -61,7 +61,6 @@ public class StartUp {
 						}
 					}
 				} 
-				Thread.sleep(10000);
 			}
 		} catch (InterruptedException ie) {
 			ie.printStackTrace();
