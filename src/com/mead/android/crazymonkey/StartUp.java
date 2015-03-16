@@ -102,9 +102,11 @@ public class StartUp {
 
 	public static FileOutputStream getLoggerForTask(final CrazyMonkeyBuild build, Task task) throws IOException, FileNotFoundException {
 		File f = new File(build.getLogPath() + "//" + task.getId() + ".log");
-		f.getParentFile().mkdirs();
-		f.createNewFile();
-		FileOutputStream file = new FileOutputStream(f);
+		if (!f.exists()) {
+			f.getParentFile().mkdirs();
+			f.createNewFile();
+		}
+		FileOutputStream file = new FileOutputStream(f, true);
 		return file;
 	}
 }
