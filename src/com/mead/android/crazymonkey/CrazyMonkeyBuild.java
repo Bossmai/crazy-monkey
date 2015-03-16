@@ -53,7 +53,7 @@ public class CrazyMonkeyBuild {
 	
 	private Set<Integer> occupiedPorts = new HashSet<Integer>();
 	
-	private int[] emulators;
+	private static int[] emulators;
 	
 	public static final int ADB_CONNECT_TIMEOUT_MS = 60 * 1000;
 	
@@ -64,6 +64,13 @@ public class CrazyMonkeyBuild {
     public static final int KILL_PROCESS_TIMEOUT_MS = 10 * 1000;
     
     public static final String EMULATOR_NAME_PREFIX = "Android_Monkey_";
+    
+    static {
+		emulators = new int[15];
+		for (int i = 0; i < 15; i++) {
+			emulators[i] = 0;
+		}
+	}
     
 	public CrazyMonkeyBuild() throws IOException {
 		File crazyMonkeyFile = Utils.getCrazyMonkeyHomeDirectory(".");
@@ -135,11 +142,9 @@ public class CrazyMonkeyBuild {
 		this.listener = StreamTaskListener.fromStdout();
 		this.channel = new LocalChannel(Executors.newCachedThreadPool());	
 		
-		emulators = new int[this.getNumberOfEmulators()];
-		for (int i = 0; i < this.getNumberOfEmulators(); i++) {
-			emulators[i] = 0;
-		}
 	}
+	
+	
 
 	private static final int MAX_TRIES = 100;
 	
@@ -387,8 +392,8 @@ public class CrazyMonkeyBuild {
 	
 	public synchronized int getAvailableEmualtorIndex() {
 		for (int i = 0; i < this.numberOfEmulators; i++) {
-			if (this.emulators[i] == 0) {
-				this.emulators[i] = 1;
+			if (emulators[i] == 0) {
+				emulators[i] = 1;
 				return i;
 			}
 		}
@@ -396,15 +401,15 @@ public class CrazyMonkeyBuild {
 	}
 	
 	public synchronized void freeEmulatorIndex (int i) {
-		if (i >= 0 && i < this.emulators.length) {
-			this.emulators[i] = 0;
+		if (i >= 0 && i < emulators.length) {
+			emulators[i] = 0;
 		}
 	}
 	
 	public synchronized int getActiveEmulatorCount () {
 		int count = 0;
-		for (int i = 0; i < this.numberOfEmulators; i++) {
-			if (this.emulators[i] == 1) {
+		for (int i = 0; i < numberOfEmulators; i++) {
+			if (emulators[i] == 1) {
 				count++;
 			}
 		}

@@ -39,6 +39,9 @@ public class StartUp {
 			int numberOfNoTasks = 0;
 
 			while (true) {
+				
+				System.out.println("Active Count = " + build.getActiveEmulatorCount());
+				
 				int activeCount = build.getActiveEmulatorCount();
 				if (activeCount >= 0 && activeCount < build.getNumberOfEmulators()) {
 					if (numberOfNoTasks != 0) {
@@ -52,7 +55,11 @@ public class StartUp {
 						numberOfNoTasks = 0;
 						for (int i = 0; i < tasks.size(); i++) {
 							Task task = tasks.get(i);
-							assignTask(build, sdk, cs, task);
+							if (Integer.parseInt(task.getEmulator().getAvdName().substring(CrazyMonkeyBuild.EMULATOR_NAME_PREFIX.length())) != -1) {
+								assignTask(build, sdk, cs, task);
+							} else {
+								System.out.println(String.format("No available emulator for the test case %s", task.getId()));
+							}
 						}
 					} else {
 						if (numberOfNoTasks < 5) {
