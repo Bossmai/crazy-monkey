@@ -11,7 +11,7 @@ import com.mead.android.crazymonkey.AndroidEmulator;
 public class Task {
 
 	public enum STATUS {
-		NONE, INPROGRESS, SUCCESS, FAILURE, NOT_BUILT
+		NONE, INPROGRESS, SUCCESS, FAILURE, NOT_BUILT, NOT_COMPLETE
 	}
 
 	private String id;

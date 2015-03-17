@@ -136,7 +136,11 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		
 		if (!result) {
 			log(logger, String.format("Run the script '%s' failed.", script));
-			task.compelteTask(STATUS.FAILURE);
+			if ((System.currentTimeMillis() - task.getExecStartTime().getTime()) / 1000 >= 120) {
+				task.compelteTask(STATUS.NOT_COMPLETE);
+			} else {
+				task.compelteTask(STATUS.FAILURE);
+			}
 		} else {
 			log(logger, String.format("Run the script '%s' scussfully.", script));
 			task.compelteTask(STATUS.SUCCESS);
