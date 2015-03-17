@@ -13,8 +13,8 @@ echo "Kill the emulator processes..."
 pgrep emulator64-arm | xargs -rt kill -9
 
 # Clean the lock file of avd
-echo "Cleaning the locked avd files..."
-cd $ANDROID_SDK_HOME/.android/avd && ls -l $ANDROID_SDK_HOME/.android/avd | grep "\.avd" | awk '{print $9}' | xargs -rt rm -rf *.lock
+echo "Clean the locked avd files..."
+find $ANDROID_SDK_HOME/.android/avd -name *.lock | xargs rm -rf
 
 # Kill the java
 echo "Kill the crazy monkey java process..."
