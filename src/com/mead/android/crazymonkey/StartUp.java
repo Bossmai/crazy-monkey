@@ -30,12 +30,15 @@ public class StartUp {
 
 		try {
 			final CrazyMonkeyBuild build = new CrazyMonkeyBuild();
+			String macAddr = Utils.getMACAddr();
 
 			threadPool = Executors.newFixedThreadPool(build.getNumberOfEmulators());
 			final AndroidSdk sdk = new AndroidSdk(build.getAndroidSdkHome(), build.getAndroidRootHome());
 			CompletionService<Task> cs = new ExecutorCompletionService<Task>(threadPool);
 
 			TaskDAO taskDAO = new MongoTask(build);
+			taskDAO.resetTask(macAddr);
+			
 			int numberOfNoTasks = 0;
 
 			while (true) {
@@ -47,10 +50,11 @@ public class StartUp {
 						System.out.println(waitingMsg);
 						Thread.sleep(waitSeconds * 3000);
 					}
-					List<Task> tasks = taskDAO.getTasks(build.getNumberOfEmulators() - activeCount, Utils.getMACAddr(), new Date());
+					int limit = build.getNumberOfEmulators() - activeCount;
+					List<Task> tasks = taskDAO.getTasks(limit, macAddr, new Date());
 					if (tasks != null && !tasks.isEmpty()) {
 						numberOfNoTasks = 0;
-						for (int i = 0; i < tasks.size(); i++) {
+						for (int i = 0; i < Math.min(tasks.size(), limit); i++) {
 							Task task = tasks.get(i);
 							if (Integer.parseInt(task.getEmulator().getAvdName().substring(CrazyMonkeyBuild.EMULATOR_NAME_PREFIX.length())) != -1) {
 								assignTask(build, sdk, cs, task);

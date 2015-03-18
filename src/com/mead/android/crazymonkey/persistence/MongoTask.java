@@ -207,4 +207,34 @@ public class MongoTask implements TaskDAO {
 		}
 		return isSucess;
 	}
+
+	@Override
+	public boolean resetTask(String slaverMac) {
+		CloseableHttpClient httpclient = HttpClients.createDefault();
+		CloseableHttpResponse response = null;
+		boolean result = false;
+		try {
+			String requestUrl = String.format("%s/task/resetAbort?slaverMAC=%s", build.getNodeHttpServer(),
+					URLEncoder.encode(slaverMac, StandardCharsets.UTF_8.toString()));
+
+			HttpGet httpGet = new HttpGet(requestUrl);
+			response = httpclient.execute(httpGet);
+			HttpEntity entity = response.getEntity();
+			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
+				result = true;
+			}
+			EntityUtils.consume(entity);
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if (response != null) {
+					response.close();
+				}
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return result;
+	}
 }

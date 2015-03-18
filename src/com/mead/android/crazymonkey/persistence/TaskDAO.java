@@ -10,5 +10,7 @@ public interface TaskDAO {
 	public List<Task> getTasks(int times, String slaverMac, Date date);
 	
 	public boolean updateTask(Task task);
+	
+	public boolean resetTask(String slaverMac);
 
 }
