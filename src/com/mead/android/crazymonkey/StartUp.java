@@ -36,8 +36,8 @@ public class StartUp {
 			final AndroidSdk sdk = new AndroidSdk(build.getAndroidSdkHome(), build.getAndroidRootHome());
 			CompletionService<Task> cs = new ExecutorCompletionService<Task>(threadPool);
 
-			TaskDAO taskDAO = new MongoTask(build);
-			taskDAO.resetTask(macAddr);
+			TaskDAO taskDAO = new MongoTask(build);			
+			System.out.println(String.format("Reset the tasks %s", taskDAO.resetTask(macAddr)));
 			
 			int numberOfNoTasks = 0;
 
