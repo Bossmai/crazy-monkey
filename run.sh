@@ -2,8 +2,12 @@
 
 # clean the evn
 source ./setenv.sh
-/bin/bash ./stop.sh
 
+echo "Run the vpn client"
+/bin/bash ./reset_vpn.sh
+cd $VPN_CLINET_HOME && ./autorun
+
+/bin/bash ./stop.sh
 # Git update and build
 echo "Update the crazy monkey code..."
 cd $CRAZY_MONKEY_HOME && git pull

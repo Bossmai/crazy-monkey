@@ -2,6 +2,7 @@
 # set the env
 
 export NETWORK_INTERFACE=eth0
+export DEFAULT_GATEWAY=192.168.3.1
 export PROJECT_HOME=/home/ericchen/crazy-monkey
 
 export JAVA_HOME=$PROJECT_HOME/jdk1.7.0_75
