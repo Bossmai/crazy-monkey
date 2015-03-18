@@ -157,7 +157,7 @@ public class MongoTask implements TaskDAO {
 		CloseableHttpResponse response = null;
 		try {
 
-			HttpPut putRequest = new HttpPut(String.format("%s/task/%s", build.getNodeHttpServer(), task.getId()));
+			HttpPut putRequest = new HttpPut(String.format("%s/task/%s", build.getNodeHttpServer(), URLEncoder.encode(task.getId(), StandardCharsets.UTF_8.toString())));
 			putRequest.addHeader("Accept", "application/json");
 			putRequest.addHeader("Content-type", "application/json");
             
