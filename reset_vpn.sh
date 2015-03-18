@@ -19,6 +19,6 @@ if [ ! -n "$default_route" ]; then
     echo "Add the default route"
     sudo ip route add default via $DEFAULT_GATEWAY dev $NETWORK_INTERFACE proto static
 else 
-    echo "Replace the default route"
-    sudo ip route replace default via $DEFAULT_GATEWAY dev $NETWORK_INTERFACE proto static
+    echo "Change the default route"
+    sudo ip route change default via $DEFAULT_GATEWAY dev $NETWORK_INTERFACE proto static
 fi
