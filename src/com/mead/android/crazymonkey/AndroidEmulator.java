@@ -43,7 +43,7 @@ public class AndroidEmulator {
 
 	
 	public AndroidEmulator() {
-		this("Android_monkey_1", "android-17", "160", "HVGA", "en_US", "200M", true, true, false, "-nocache -noskin -gpu on", "armeabi-v7a",
+		this("Android_monkey_1", "android-17", "160", "HVGA", "en_US", "200M", true, true, false, "-nocache -noaudio -noskin -gpu on", "armeabi-v7a",
 				"D://tools//Android//android-sdk", "", "");
 	}
 
