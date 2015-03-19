@@ -914,38 +914,44 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         // FIXME: Sometimes on Windows neither the emulator.exe nor the adb.exe processes die.
         //        Launcher.kill(EnvVars) does not appear to help either.
         //        This is (a) inconsistent; (b) very annoying.
-
-        // Stop emulator process
-        log(emu.logger(), Messages.STOPPING_EMULATOR());
-        
-        boolean killed = emu.sendCommand("kill");
-
-        // Ensure the process is dead
-        if (!killed && emu.getProcess().isAlive()) {
-            // Give up trying to kill it after a few seconds, in case it's deadlocked
-            killed = Utils.killProcess(emu.getProcess(), CrazyMonkeyBuild.KILL_PROCESS_TIMEOUT_MS);
-            if (!killed) {
-                log(emu.logger(), Messages.EMULATOR_SHUTDOWN_FAILED());
-            }
+    	try {
+	        // Stop emulator process
+	        log(emu.logger(), Messages.STOPPING_EMULATOR());
+	        
+	        boolean killed = emu.sendCommand("kill");
+	
+	        // Ensure the process is dead
+	        if (!killed && emu.getProcess().isAlive()) {
+	            // Give up trying to kill it after a few seconds, in case it's deadlocked
+	            killed = Utils.killProcess(emu.getProcess(), CrazyMonkeyBuild.KILL_PROCESS_TIMEOUT_MS);
+	            if (!killed) {
+	            	// try it again to kill the process
+	            	killed = Utils.killProcess(emu.getProcess(), CrazyMonkeyBuild.KILL_PROCESS_TIMEOUT_MS);
+	            	if (!killed) {
+	            		log(emu.logger(), Messages.EMULATOR_SHUTDOWN_FAILED());
+	            	}
+	            }
+	        }
+	        /*
+	        ArgumentListBuilder adbKillCmd = emu.getToolCommand(Tool.ADB, "kill-server");
+	        emu.getProcStarter(adbKillCmd).join();
+			*/
+	        // Delete the emulator, if required
+	        if (emulatorConfig.isDeleteAfterBuild()) {
+	            try {
+	                Callable<Boolean, Exception> deletionTask = new EmulatorDeletionTask(emu, emulatorConfig);
+	                emu.getBuild().getChannel().call(deletionTask);
+	            } catch (Exception ex) {
+	                log(emu.logger(), Messages.FAILED_TO_DELETE_AVD(ex.getLocalizedMessage()));
+	            } catch (Throwable e) {
+	            	log(emu.logger(), Messages.FAILED_TO_DELETE_AVD(e.getLocalizedMessage()));
+					e.printStackTrace();
+				}
+	        }
+        } finally {
+        	build.freePorts(new int[]{emu.getAdbPort(), emu.getUserPort()});
+            build.freeEmulator(emulatorConfig.getAvdName());
         }
-        /*
-        ArgumentListBuilder adbKillCmd = emu.getToolCommand(Tool.ADB, "kill-server");
-        emu.getProcStarter(adbKillCmd).join();
-		*/
-        // Delete the emulator, if required
-        if (emulatorConfig.isDeleteAfterBuild()) {
-            try {
-                Callable<Boolean, Exception> deletionTask = new EmulatorDeletionTask(emu, emulatorConfig);
-                emu.getBuild().getChannel().call(deletionTask);
-            } catch (Exception ex) {
-                log(emu.logger(), Messages.FAILED_TO_DELETE_AVD(ex.getLocalizedMessage()));
-            } catch (Throwable e) {
-            	log(emu.logger(), Messages.FAILED_TO_DELETE_AVD(e.getLocalizedMessage()));
-				e.printStackTrace();
-			}
-        }
-        build.freePorts(new int[]{emu.getAdbPort(), emu.getUserPort()});
-        build.freeEmulator(emulatorConfig.getAvdName());
     }
     
     /** A task that deletes the AVD corresponding to our local state. */
