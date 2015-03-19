@@ -2,23 +2,27 @@
 
 source ./setenv.sh
 
-echo "Kill vpn-daemon"
-pgrep vpn-daemon | xargs -rt kill -9 
+echo "-------------------- Reset the VPN --------------------"
 
-echo "Kill the main"
-ps aux | grep main | awk '{print $2}' | xargs -rt kill -9
+echo "[VPN Client] Kill vpn-daemon"
+pgrep vpn-daemon | xargs -rt kill -9 | sed 's/^/[VPN Client] &/g'
 
-echo "Off the vpn"
-sudo poff vpnpptp
+echo "[VPN Client] Kill the main"
+ps aux | grep main | awk '{print $2}' | xargs -rt kill -9 | sed 's/^/[VPN Client] &/g'
 
-echo "Kill the pptp"
-ps aux | grep pptp | awk '{print $2}' | xargs -rt sudo kill -9
+echo "[VPN Client] Off the vpn"
+sudo poff vpnpptp | sed 's/^/[VPN Client] &/g'
 
-default_route=$(ip route list | grep default | awk {'print $1'})
+echo "[VPN Client] Kill the pptp"
+ps aux | grep pptp | awk '{print $2}' | xargs -rt sudo kill -9 | sed 's/^/[VPN Client] &/g'
+
+default_route=$(ip route list | grep default | awk {'print $1'}) 
 if [ ! -n "$default_route" ]; then
-    echo "Add the default route"
-    sudo ip route add default via $DEFAULT_GATEWAY dev $NETWORK_INTERFACE proto static
+    echo "[VPN Client] Add the default route"
+    sudo ip route add default via $DEFAULT_GATEWAY dev $NETWORK_INTERFACE proto static | sed 's/^/[VPN Client] &/g'
 else 
-    echo "Change the default route"
-    sudo ip route change default via $DEFAULT_GATEWAY dev $NETWORK_INTERFACE proto static
+    echo "[VPN Client] Change the default route"
+    sudo ip route change default via $DEFAULT_GATEWAY dev $NETWORK_INTERFACE proto static | sed 's/^/[VPN Client] &/g'
 fi
+
+echo "-------------------- Done --------------------"
