@@ -51,6 +51,8 @@ public class CrazyMonkeyBuild {
 	
 	private int emulatorTimeout = 30;
 	
+	private int runScriptTimeout = 1000;
+
 	private Set<Integer> occupiedPorts = new HashSet<Integer>();
 	
 	private int[] emulators;
@@ -123,6 +125,12 @@ public class CrazyMonkeyBuild {
 		
 		try {
 			this.setNumberOfEmulators(Integer.parseInt(config.get("emulator.max_number")));
+		} catch (NumberFormatException e) {
+
+		}
+		
+		try {
+			this.setRunScriptTimeout(Integer.parseInt(config.get("emulator.run_script_timeout")));
 		} catch (NumberFormatException e) {
 
 		}
@@ -385,6 +393,14 @@ public class CrazyMonkeyBuild {
 
 	public int[] getEmulators() {
 		return emulators;
+	}
+
+	public int getRunScriptTimeout() {
+		return runScriptTimeout;
+	}
+
+	public void setRunScriptTimeout(int runScriptTimeout) {
+		this.runScriptTimeout = runScriptTimeout;
 	}
 	
 	public synchronized int getAvailableEmualtorIndex() {
