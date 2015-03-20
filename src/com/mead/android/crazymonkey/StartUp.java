@@ -37,7 +37,7 @@ public class StartUp {
 			CompletionService<Task> cs = new ExecutorCompletionService<Task>(threadPool);
 
 			TaskDAO taskDAO = new MongoTask(build);			
-			System.out.println(String.format("Reset the tasks %s", taskDAO.resetTask(macAddr)));
+			System.out.println(String.format(("[" + new Date() + "] - Reset the tasks %s on %s."), taskDAO.resetTask(macAddr), macAddr));
 			
 			int numberOfNoTasks = 0;
 

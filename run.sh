@@ -13,7 +13,7 @@ cd $CRAZY_MONKEY_HOME && $ANT_HOME/bin/ant
 # Clean the env
 cd $CRAZY_MONKEY_HOME && /bin/bash ./stop.sh
 
-echo "[VPN Client] Run the vpn client..."
+# Run the vpn client
 cd $CRAZY_MONKEY_HOME && /bin/bash ./reset_vpn.sh
 cd $VPN_CLINET_HOME && ./autorun
 
