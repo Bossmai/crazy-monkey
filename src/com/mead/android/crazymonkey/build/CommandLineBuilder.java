@@ -64,7 +64,7 @@ public abstract class CommandLineBuilder extends Builder{
 			int r = new ProcStarter().cmds(buildCommandLine()).stdout(emulatorLogger).envs(buildEnvironment).start().join();
 			String result = emulatorOutput.toString();
 			
-			if (r == 0 && result != null && (result.contains("OK (1 test)") || result.contains("Monkey success."))) {
+			if (r == 0 && result != null && (result.contains("OK (1 test)") || result.contains(successText))) {
 				return true;
 			} else {
 				return false;

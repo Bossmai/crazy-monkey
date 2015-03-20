@@ -132,11 +132,12 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		args.add(context.getSerial());
 		
 		Builder builder = getBuilder(script, args);
-		result = runTestCase(script, builder);
+		int tryNum = 3;
+		result = runTestCase(script, builder, tryNum);
 		return result;
 	}
 
-	public boolean runTestCase(String script, Builder builder) throws IOException, InterruptedException {
+	public boolean runTestCase(String script, Builder builder, int tryNum) throws IOException, InterruptedException {
 		boolean result;
 		result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Monkey success.");
 		
@@ -146,7 +147,9 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 				task.compelteTask(STATUS.NOT_COMPLETE);
 			} else {
 				task.compelteTask(STATUS.FAILURE);
-				result = runTestCase(script, builder);
+				if (tryNum >= 1) {
+					result = runTestCase(script, builder, --tryNum);
+				}
 			}
 		} else {
 			log(logger, String.format("Run the script '%s' scussfully.", script));

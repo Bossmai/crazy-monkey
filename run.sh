@@ -16,7 +16,6 @@ cd $CRAZY_MONKEY_HOME && /bin/bash ./stop.sh
 echo "[VPN Client] Run the vpn client..."
 cd $CRAZY_MONKEY_HOME && /bin/bash ./reset_vpn.sh
 cd $VPN_CLINET_HOME && ./autorun
-sleep 10
 
 # Run the testing
 $JAVA_HOME/bin/java -jar $CRAZY_MONKEY_HOME/crazy-monkey-0.1.jar
