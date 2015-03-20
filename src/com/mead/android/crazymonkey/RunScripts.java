@@ -98,12 +98,10 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 						}
 						if (!result) {
 							log(logger, String.format("Failed to intsall the test apk '%s'.", apkName));
-							task.setStatus(STATUS.FAILURE);
-						} else {
-							// run te script 
-							Thread.sleep(build.getRunScriptDelay() * 1000);
-							runScripts();
 						}
+						// run te script 
+						Thread.sleep(build.getRunScriptDelay() * 1000);
+						runScripts();
 					}
 				}
 			}
@@ -513,6 +511,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		if (!result) {
 			log(logger, String.format("Config the phone information '%s' failed.", script));
 			task.setStatus(STATUS.NOT_BUILT);
+			task.getEmulator().setDeleteAfterBuild(true);
 		} else {
 			log(logger, String.format("Config the phone information '%s' scussfully.", script));
 		}
