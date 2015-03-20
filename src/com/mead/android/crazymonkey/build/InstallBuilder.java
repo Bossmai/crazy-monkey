@@ -72,7 +72,14 @@ public class InstallBuilder extends Builder {
 
 	public static Builder getInstance(Task task) {
 		AppRunner appRunner = task.getAppRunner();
-		Builder builder = new InstallBuilder(appRunner.getAppId(), false, false);
+		Builder builder = new InstallBuilder(appRunner.getAppId(), false, true);
+		return builder;
+	}
+	
+	public static Builder getTestInstance(Task task) {
+		AppRunner appRunner = task.getAppRunner();
+		String apkName = appRunner.getAppId().substring(0, appRunner.getAppId().length() - 4) + "_test.apk";
+		Builder builder = new InstallBuilder(apkName, false, true);
 		return builder;
 	}
 

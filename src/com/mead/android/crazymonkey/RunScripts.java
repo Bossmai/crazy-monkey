@@ -77,12 +77,10 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 				Thread.sleep(build.getConfigPhoneDelay() * 1000);
 				boolean configPhoneSuccess = configPhoneInfo();
 				if (configPhoneSuccess) {
-					
+					boolean result = false;
 					// install the apk file
 					Thread.sleep(build.getInstallApkDelay() * 1000);
 					Builder installBuilder = InstallBuilder.getInstance(task);
-					
-					boolean result = false;
 					synchronized (this){
 						result = installBuilder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Success");
 					}
@@ -90,16 +88,23 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 						log(logger, String.format("Failed to intsall the apk '%s'.", task.getAppRunner().getAppId()));
 						task.setStatus(STATUS.FAILURE);
 					} else {
-						/*
-						if (task.getAppRunner().getScriptType().equals("Alive")) {
-							restoreBackup();
+						// install the test apk file
+						Thread.sleep(build.getInstallApkDelay() * 1000);
+						Builder installTestApk = InstallBuilder.getTestInstance(task);
+						String apkName = task.getAppRunner().getAppId().substring(0, task.getAppRunner().getAppId().length() - 4) + "_test.apk";
+						
+						synchronized (this){
+							result = installTestApk.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Success");
 						}
-						*/
-						// run te script 
-						Thread.sleep(build.getRunScriptDelay() * 1000);
-						runScripts();
+						if (!result) {
+							log(logger, String.format("Failed to intsall the test apk '%s'.", apkName));
+							task.setStatus(STATUS.FAILURE);
+						} else {
+							// run te script 
+							Thread.sleep(build.getRunScriptDelay() * 1000);
+							runScripts();
+						}
 					}
-					
 				}
 			}
 		} catch (InterruptedException | IOException e) {
