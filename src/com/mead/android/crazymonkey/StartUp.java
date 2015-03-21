@@ -55,6 +55,7 @@ public class StartUp {
 					if (tasks != null && !tasks.isEmpty()) {
 						numberOfNoTasks = 0;
 						for (int i = 0; i < Math.min(tasks.size(), limit); i++) {
+							Thread.sleep(5000);
 							Task task = tasks.get(i);
 							if (Integer.parseInt(task.getEmulator().getAvdName().substring(CrazyMonkeyBuild.EMULATOR_NAME_PREFIX.length())) != -1) {
 								assignTask(build, sdk, cs, task);
@@ -86,7 +87,7 @@ public class StartUp {
 	public static void assignTask(final CrazyMonkeyBuild build, final AndroidSdk sdk, CompletionService<Task> cs, final Task task)
 			throws IOException, FileNotFoundException {
 
-		System.out.print(String.format("[" + new Date() + "] - The monkey task '%s' has started. \r\n", task.getId()));
+		System.out.print(String.format("[" + new Date() + "] - The %s task '%s' has started. \r\n", task.getEmulator().getAvdName(), task.getId()));
 		task.setAssignTime(new Date());
 
 		Callable<Task> runCallable = new RunScripts(build, task, sdk, new StreamTaskListener(getLoggerForTask(build, task)));

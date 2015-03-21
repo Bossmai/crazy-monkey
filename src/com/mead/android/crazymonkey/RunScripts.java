@@ -69,7 +69,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 	public Task call() {
 		try {
 			// run the emulator
-			Thread.sleep((long)Math.random() * build.getNumberOfEmulators() * 1000);
+			Thread.sleep(3000);
 			Boolean isRunEmulatorSuccess = runEmulator();
 			
 			if (isRunEmulatorSuccess != null && isRunEmulatorSuccess.booleanValue()) {
@@ -932,12 +932,8 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 	            // Give up trying to kill it after a few seconds, in case it's deadlocked
 	            killed = Utils.killProcess(emu.getProcess(), CrazyMonkeyBuild.KILL_PROCESS_TIMEOUT_MS);
 	            if (!killed) {
-	            	// try it again to kill the process
-	            	killed = Utils.killProcess(emu.getProcess(), CrazyMonkeyBuild.KILL_PROCESS_TIMEOUT_MS);
-	            	if (!killed) {
-	            		log(emu.logger(), Messages.EMULATOR_SHUTDOWN_FAILED());
-	            	}
-	            }
+            		log(emu.logger(), Messages.EMULATOR_SHUTDOWN_FAILED());
+            	}
 	        }
 	        /*
 	        ArgumentListBuilder adbKillCmd = emu.getToolCommand(Tool.ADB, "kill-server");

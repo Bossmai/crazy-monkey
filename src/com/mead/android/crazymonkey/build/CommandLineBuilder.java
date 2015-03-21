@@ -64,7 +64,7 @@ public abstract class CommandLineBuilder extends Builder{
 			
 			LocalProc localProc = new ProcStarter().cmds(buildCommandLine()).stdout(emulatorLogger).envs(buildEnvironment).start();
 			int r = localProc.join();
-			Utils.killProcess(localProc, 5 * 60 * 1000);
+			
 			String result = emulatorOutput.toString();
 			if (r == 0 && result != null && (result.contains("OK (1 test)") || result.contains(successText))) {
 				return true;
