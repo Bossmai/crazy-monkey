@@ -17,8 +17,8 @@ echo "[Android Emulator] Clean the locked avd files..."
 cd $ANDROID_SDK_HOME/.android/avd && find $ANDROID_SDK_HOME/.android/avd -name *.lock | xargs -rt rm -rf  | sed 's/^/[Android Emulator] &/g'
 echo "[Android Emulator] Clean the modem files..."
 cd $ANDROID_SDK_HOME/.android && rm modem-nv-ram-*
-echo "[Android Emulator] Clean the tmp files..."
-cd /tmp/android-$USER && rm * 
+#echo "[Android Emulator] Clean the tmp files..."
+#cd /tmp/android-$USER && rm * 
 
 # Kill the java
 echo "[Crazy Monkey] Kill the crazy monkey java process..."

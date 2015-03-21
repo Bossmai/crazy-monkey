@@ -16,7 +16,7 @@ public class AndroidEmulatorContext {
 
 	public static final String EMULATOR_PREFIX = "emulator-";
 	 /** Interval during which an emulator command should complete. */
-    public static final int EMULATOR_COMMAND_TIMEOUT_MS = 60 * 1000;
+    public static final int EMULATOR_COMMAND_TIMEOUT_MS = 5 * 60 * 1000;
 
 	private int adbPort, userPort, adbServerPort;
 	private String serial;
