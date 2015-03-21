@@ -511,7 +511,6 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		if (!result) {
 			log(logger, String.format("Config the phone information '%s' failed.", script));
 			task.setStatus(STATUS.NOT_BUILT);
-			task.getEmulator().setDeleteAfterBuild(true);
 		} else {
 			log(logger, String.format("Config the phone information '%s' scussfully.", script));
 		}
@@ -551,6 +550,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 			log(logger, String.format("Restore the apk bakcup '%s' failed.", script));
 			task.setStatus(STATUS.NOT_BUILT);
 		} else {
+			task.getEmulator().setDeleteAfterBuild(false);
 			log(logger, String.format("Restore the apk bakcup '%s' scussfully.", script));
 		}
 		return;
