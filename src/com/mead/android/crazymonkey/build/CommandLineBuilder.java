@@ -13,6 +13,7 @@ import com.mead.android.crazymonkey.AndroidEmulatorContext;
 import com.mead.android.crazymonkey.CrazyMonkeyBuild;
 import com.mead.android.crazymonkey.StreamTaskListener;
 import com.mead.android.crazymonkey.process.ForkOutputStream;
+import com.mead.android.crazymonkey.process.LocalProc;
 import com.mead.android.crazymonkey.process.ProcStarter;
 import com.mead.android.crazymonkey.sdk.AndroidSdk;
 import com.mead.android.crazymonkey.util.Utils;
@@ -61,9 +62,10 @@ public abstract class CommandLineBuilder extends Builder{
 			ByteArrayOutputStream emulatorOutput = new ByteArrayOutputStream();
 			ForkOutputStream emulatorLogger = new ForkOutputStream(logger, emulatorOutput);
 			
-			int r = new ProcStarter().cmds(buildCommandLine()).stdout(emulatorLogger).envs(buildEnvironment).start().join();
+			LocalProc localProc = new ProcStarter().cmds(buildCommandLine()).stdout(emulatorLogger).envs(buildEnvironment).start();
+			int r = localProc.join();
+			Utils.killProcess(localProc, 5 * 60 * 1000);
 			String result = emulatorOutput.toString();
-			
 			if (r == 0 && result != null && (result.contains("OK (1 test)") || result.contains(successText))) {
 				return true;
 			} else {
