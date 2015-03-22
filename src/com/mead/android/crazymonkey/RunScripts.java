@@ -550,7 +550,6 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 			log(logger, String.format("Restore the apk bakcup '%s' failed.", script));
 			task.setStatus(STATUS.NOT_BUILT);
 		} else {
-			task.getEmulator().setDeleteAfterBuild(false);
 			log(logger, String.format("Restore the apk bakcup '%s' scussfully.", script));
 		}
 		return;
