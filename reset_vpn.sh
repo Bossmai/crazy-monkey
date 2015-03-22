@@ -5,16 +5,16 @@ source ./setenv.sh
 echo "-------------------- Reset the VPN --------------------"
 
 echo "[VPN Client] Kill vpn-daemon"
-pgrep vpn-daemon | xargs -rt kill -9 | sed 's/^/[VPN Client] &/g'
+pgrep vpn-daemon | xargs -rt kill -9
 
 echo "[VPN Client] Kill the main"
-ps aux | grep main | awk '{print $2}' | xargs -rt kill -9 | sed 's/^/[VPN Client] &/g'
+ps aux | grep main | awk '{print $2}' | xargs -rt kill -9
 
 echo "[VPN Client] Off the vpn"
 sudo poff vpnpptp | sed 's/^/[VPN Client] &/g'
 
 echo "[VPN Client] Kill the pptp"
-ps aux | grep pptp | awk '{print $2}' | xargs -rt sudo kill -9 | sed 's/^/[VPN Client] &/g'
+ps aux | grep pptp | awk '{print $2}' | xargs -rt sudo kill -9
 
 default_route=$(ip route list | grep default | awk {'print $1'}) 
 if [ ! -n "$default_route" ]; then
