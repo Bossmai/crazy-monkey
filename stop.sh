@@ -22,7 +22,7 @@ cd $ANDROID_SDK_HOME/.android && rm modem-nv-ram-*
 
 # Kill the java
 echo "[Crazy Monkey] Kill the crazy monkey java process..."
-ps aux | grep "bin/java -jar $CRAZY_MONKEY_HOME/crazy-monkey" | awk '{print $2}' | xargs -rt sudo kill -9 
+ps aux | grep "bin/java -jar $CRAZY_MONKEY_HOME/crazy-monkey" | grep -v grep | awk '{print $2}' | xargs -rt sudo kill -9 
 
 # Tar the log files
 echo "[Crazy Monkey] Compress all the log files..."
