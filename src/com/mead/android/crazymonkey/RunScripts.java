@@ -135,7 +135,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		args.add(context.getSerial());
 		
 		Builder builder = getBuilder(script, args);
-		int tryNum = 3;
+		int tryNum = 2;
 		result = runTestCase(script, builder, tryNum);
 		return result;
 	}
@@ -149,9 +149,10 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 			if ((System.currentTimeMillis() - task.getExecStartTime().getTime()) / 1000 >= build.getRunScriptTimeout()) {
 				task.compelteTask(STATUS.NOT_COMPLETE);
 			} else {
-				task.compelteTask(STATUS.FAILURE);
 				if (tryNum >= 1) {
 					result = runTestCase(script, builder, --tryNum);
+				} else {
+					task.compelteTask(STATUS.NOT_COMPLETE);
 				}
 			}
 		} else {
