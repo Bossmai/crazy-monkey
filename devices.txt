@@ -1,0 +1,4 @@
+List of devices attached 
+192.168.56.102:5555	device
+192.168.56.101:5555	device
+

@@ -3,7 +3,9 @@ package com.mead.android.crazymonkey;
 import java.io.File;
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -11,9 +13,12 @@ import java.util.concurrent.Executors;
 
 import com.mead.android.crazymonkey.process.Callable;
 import com.mead.android.crazymonkey.process.LocalChannel;
+import com.mead.android.crazymonkey.util.ReadSelectedLine;
 import com.mead.android.crazymonkey.util.Utils;
 
 public class CrazyMonkeyBuild {
+
+	private static final String EMULATOR_GENYMOTION = "genymotion";
 
 	private String crazyMonkeyHome;
 
@@ -57,6 +62,10 @@ public class CrazyMonkeyBuild {
 	
 	private int[] emulators;
 	
+	private static Map<Integer, String> emulatorNames = new HashMap<Integer, String>();
+	
+	private String emulatorType;
+	
 	public static final int ADB_CONNECT_TIMEOUT_MS = 5 * 60 * 1000;
 	
 	/** Duration by which emulator booting should normally complete. */
@@ -80,6 +89,7 @@ public class CrazyMonkeyBuild {
 		this.setAndroidSdkHome(config.get("android.sdk.home"));
 		this.setAndroidRootHome(config.get("android.sdk.root"));
 		this.setNodeHttpServer(config.get("node.httpserver"));
+		this.setEmulatorType(config.get("emulator.type"));
 		
 		try {
 			this.setStartPort(Integer.parseInt(config.get("emulator.start_port")));
@@ -143,14 +153,22 @@ public class CrazyMonkeyBuild {
 		this.listener = StreamTaskListener.fromStdout();
 		this.channel = new LocalChannel(Executors.newCachedThreadPool());	
 		
-		this.emulators = new int[this.numberOfEmulators];
-		for (int i = 0; i < emulators.length; i++) {
-			this.emulators[i] = 0;
+		if (this.isGenyMotion()) {
+			List<String> genyMotionDevicesList = ReadSelectedLine.readDevicesList(this.crazyMonkeyHome + "/devices.txt");
+			int size = Math.min(this.numberOfEmulators, genyMotionDevicesList.size());
+			this.emulators = new int[size];
+			for (int i = 0; i < size; i++) {
+				this.emulators[i] = 0;
+				emulatorNames.put(i, genyMotionDevicesList.get(i));
+			}
+		} else {
+			this.emulators = new int[this.numberOfEmulators];
+			for (int i = 0; i < emulators.length; i++) {
+				this.emulators[i] = 0;
+			}
 		}
 	}
 	
-	
-
 	private static final int MAX_TRIES = 100;
 	
 	public synchronized int[] getNextPorts() {
@@ -432,5 +450,30 @@ public class CrazyMonkeyBuild {
 	public synchronized void freeEmulator (String emulatorName) {
 		int index = Integer.parseInt(emulatorName.substring(CrazyMonkeyBuild.EMULATOR_NAME_PREFIX.length()));
 		this.freeEmulatorIndex(index);
+	}
+
+	public static String getGenyMotionEmulatorName (String emulatorName) {
+		int index = Integer.parseInt(emulatorName.substring(CrazyMonkeyBuild.EMULATOR_NAME_PREFIX.length()));
+		return emulatorNames.get(index);
+	}
+	
+	public static Map<Integer, String> getEmulatorNames() {
+		return emulatorNames;
+	}
+
+	public static void setEmulatorNames(Map<Integer, String> emulatorNames) {
+		CrazyMonkeyBuild.emulatorNames = emulatorNames;
+	}
+
+	public  String getEmulatorType() {
+		return this.emulatorType;
+	}
+
+	public  void setEmulatorType(String emulatorType) {
+		this.emulatorType = emulatorType;
+	}
+	
+	public boolean isGenyMotion () {
+		return this.emulatorType.equals(EMULATOR_GENYMOTION);
 	}
 }

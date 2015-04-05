@@ -90,9 +90,13 @@ public class StartUp {
 		System.out.print(String.format("[" + new Date() + "] - The %s task '%s' has started. \r\n", task.getEmulator().getAvdName(), task.getId()));
 		task.setAssignTime(new Date());
 
-		Callable<Task> runCallable = new RunScripts(build, task, sdk, new StreamTaskListener(getLoggerForTask(build, task)));
+		Callable<Task> runCallable = null;
+		if (build.isGenyMotion()) {
+			runCallable = new RunScriptsOnGenyMotion(build, task, sdk, new StreamTaskListener(getLoggerForTask(build, task)));
+		} else {
+			runCallable = new RunScripts(build, task, sdk, new StreamTaskListener(getLoggerForTask(build, task)));
+		}
 		final Future<Task> future = cs.submit(runCallable);
-
 		ScheduledExecutorService canceller = Executors.newSingleThreadScheduledExecutor();
 		canceller.schedule(new Callable<Void>() {
 			public Void call() {

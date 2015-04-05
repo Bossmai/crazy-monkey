@@ -7,9 +7,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.io.PrintWriter;
 import java.io.PushbackInputStream;
-import java.io.StringWriter;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,8 +21,6 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 import com.mead.android.crazymonkey.build.Builder;
 import com.mead.android.crazymonkey.build.InstallBuilder;
-import com.mead.android.crazymonkey.build.RunBatBuilder;
-import com.mead.android.crazymonkey.build.RunShellBuilder;
 import com.mead.android.crazymonkey.model.HardwareProperty;
 import com.mead.android.crazymonkey.model.Task;
 import com.mead.android.crazymonkey.model.Task.STATUS;
@@ -85,7 +81,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 						result = installBuilder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Success");
 					}
 					if (!result) {
-						log(logger, String.format("Failed to intsall the apk '%s'.", task.getAppRunner().getAppId()));
+						Utils.log(logger, String.format("Failed to intsall the apk '%s'.", task.getAppRunner().getAppId()));
 						task.setStatus(STATUS.FAILURE);
 					} else {
 						// install the test apk file
@@ -97,7 +93,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 							result = installTestApk.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Success");
 						}
 						if (!result) {
-							log(logger, String.format("Failed to intsall the test apk '%s'.", apkName));
+							Utils.log(logger, String.format("Failed to intsall the test apk '%s'.", apkName));
 						}
 						// run te script 
 						Thread.sleep(build.getRunScriptDelay() * 1000);
@@ -108,7 +104,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		} catch (InterruptedException | IOException e) {
 			task.setStatus(STATUS.FAILURE);
 			String msg = String.format("The task '%d' is interrputed. ", task.getAppRunner().getAppId());
-			log(logger, msg);
+			Utils.log(logger, msg);
 			System.out.println("[" + new Date() + "]" + msg);
 		} finally {
 			try {
@@ -134,7 +130,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		List<String> args = new ArrayList<String>();
 		args.add(context.getSerial());
 		
-		Builder builder = getBuilder(script, args);
+		Builder builder = Utils.getBuilder(script, args);
 		int tryNum = 2;
 		result = runTestCase(script, builder, tryNum);
 		return result;
@@ -145,7 +141,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Monkey success.");
 		
 		if (!result) {
-			log(logger, String.format("Run the script '%s' failed.", script));
+			Utils.log(logger, String.format("Run the script '%s' failed.", script));
 			if ((System.currentTimeMillis() - task.getExecStartTime().getTime()) / 1000 >= build.getRunScriptTimeout()) {
 				task.compelteTask(STATUS.NOT_COMPLETE);
 			} else {
@@ -156,20 +152,10 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 				}
 			}
 		} else {
-			log(logger, String.format("Run the script '%s' scussfully.", script));
+			Utils.log(logger, String.format("Run the script '%s' scussfully.", script));
 			task.compelteTask(STATUS.SUCCESS);
 		}
 		return result;
-	}
-
-	public Builder getBuilder(String script, List<String> args) {
-		Builder builder = null;
-		if (!Utils.isUnix()) {
-			builder = new RunBatBuilder(script, args);
-		} else {
-			builder = new RunShellBuilder(script, args);
-		}
-		return builder;
 	}
 
 	public void tearDown() throws IOException, InterruptedException {
@@ -506,14 +492,14 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		}
 		args.add(androidToolsDir);
 		
-		Builder builder = this.getBuilder(script, args);
+		Builder builder = Utils.getBuilder(script, args);
 		
 		boolean result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "OK (1 test)");
 		if (!result) {
-			log(logger, String.format("Config the phone information '%s' failed.", script));
+			Utils.log(logger, String.format("Config the phone information '%s' failed.", script));
 			task.setStatus(STATUS.NOT_BUILT);
 		} else {
-			log(logger, String.format("Config the phone information '%s' scussfully.", script));
+			Utils.log(logger, String.format("Config the phone information '%s' scussfully.", script));
 		}
 		return result;
 	}
@@ -545,13 +531,13 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		}
 		
 		args.add(androidToolsDir);
-		Builder builder = this.getBuilder(script, args);
+		Builder builder = Utils.getBuilder(script, args);
 		boolean result = builder.perform(build, androidSdk, task.getEmulator(), context, taskListener, "Success");
 		if (!result) {
-			log(logger, String.format("Restore the apk bakcup '%s' failed.", script));
+			Utils.log(logger, String.format("Restore the apk bakcup '%s' failed.", script));
 			task.setStatus(STATUS.NOT_BUILT);
 		} else {
-			log(logger, String.format("Restore the apk bakcup '%s' scussfully.", script));
+			Utils.log(logger, String.format("Restore the apk bakcup '%s' scussfully.", script));
 		}
 		return;
 	}
@@ -580,7 +566,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         try {
             emulatorAlreadyExists = this.createAvd();
         } catch (AndroidEmulatorException ex) {
-            log(logger, Messages.COULD_NOT_CREATE_EMULATOR(ex.getMessage()));
+            Utils.log(logger, Messages.COULD_NOT_CREATE_EMULATOR(ex.getMessage()));
             task.setStatus(STATUS.NOT_BUILT);
             return null;
         }
@@ -592,7 +578,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         // Delay start up by the configured amount of time
         final int delaySecs = build.getStartUpDelay();
         if (delaySecs > 0) {
-            log(logger, Messages.DELAYING_START_UP(delaySecs));
+            Utils.log(logger, Messages.DELAYING_START_UP(delaySecs));
             Thread.sleep(delaySecs * 1000);
         }
         
@@ -608,7 +594,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 		} while ((ports[0] == 0 || ports[1] == 0) && tryNum < maxTryNum);
 		
 		if (tryNum == maxTryNum) {
-			log(logger, "There is no available ports for the emulator.");
+			Utils.log(logger, "There is no available ports for the emulator.");
 			return null;
 		}
         
@@ -655,18 +641,18 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         final String emulatorArgs = emuConfig.getCommandArguments(snapshotState,
                 androidSdk.supportsSnapshots(), emu.getUserPort(), emu.getAdbPort());
         
-        log(logger, "[Android] run emulator with agrumenets: " + emulatorArgs);
+        Utils.log(logger, "[Android] run emulator with agrumenets: " + emulatorArgs);
 
         // Start emulator process
         if (snapshotState == SnapshotState.BOOT) {
-            log(logger, Messages.STARTING_EMULATOR_FROM_SNAPSHOT());
+            Utils.log(logger, Messages.STARTING_EMULATOR_FROM_SNAPSHOT());
         } else if (snapshotState == SnapshotState.INITIALISE) {
-            log(logger, Messages.STARTING_EMULATOR_SNAPSHOT_INIT());
+            Utils.log(logger, Messages.STARTING_EMULATOR_SNAPSHOT_INIT());
         } else {
-            log(logger, Messages.STARTING_EMULATOR());
+            Utils.log(logger, Messages.STARTING_EMULATOR());
         }
         if (emulatorAlreadyExists && emuConfig.isWipeData()) {
-            log(logger, Messages.ERASING_EXISTING_EMULATOR_DATA());
+            Utils.log(logger, Messages.ERASING_EXISTING_EMULATOR_DATA());
         }
         final long bootTime = System.currentTimeMillis();
 
@@ -684,14 +670,14 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 
         // Check whether a failure was reported on stdout
         if (emulatorOutput.toString().contains("image is used by another emulator")) {
-            log(logger, Messages.EMULATOR_ALREADY_IN_USE(emuConfig.getAvdName()));
+            Utils.log(logger, Messages.EMULATOR_ALREADY_IN_USE(emuConfig.getAvdName()));
             return null;
         }
 
         // Wait for TCP socket to become available
         boolean socket = waitForSocket(build, emu.getAdbPort(), CrazyMonkeyBuild.ADB_CONNECT_TIMEOUT_MS);
         if (!socket) {
-            log(logger, Messages.EMULATOR_DID_NOT_START());
+            Utils.log(logger, Messages.EMULATOR_DID_NOT_START());
             task.setStatus(STATUS.NOT_BUILT);
             //cleanUp(build, emuConfig, emu);
             return null;
@@ -708,7 +694,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         // Notify adb of our existence
         int result = emu.getToolProcStarter(Tool.ADB, "connect " + emu.getSerial()).join();
         if (result != 0) { // adb currently only ever returns 0!
-            log(logger, Messages.CANNOT_CONNECT_TO_EMULATOR());
+            Utils.log(logger, Messages.CANNOT_CONNECT_TO_EMULATOR());
             //build.setResult(Result.NOT_BUILT);
             task.setStatus(STATUS.NOT_BUILT);
             //cleanUp(build, emuConfig, emu);
@@ -716,7 +702,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         }
 
         // Monitor device for boot completion signal
-        log(logger, Messages.WAITING_FOR_BOOT_COMPLETION());
+        Utils.log(logger, Messages.WAITING_FOR_BOOT_COMPLETION());
         int bootTimeout = CrazyMonkeyBuild.BOOT_COMPLETE_TIMEOUT_MS;
         if (!emulatorAlreadyExists || emuConfig.isWipeData() || snapshotState == SnapshotState.INITIALISE) {
             bootTimeout *= 2;
@@ -725,9 +711,9 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         boolean bootSucceeded = waitForBootCompletion(ignoreProcess, bootTimeout, emuConfig, emu);
         if (!bootSucceeded) {
             if ((System.currentTimeMillis() - bootTime) < bootTimeout) {
-                log(logger, Messages.EMULATOR_STOPPED_DURING_BOOT());
+                Utils.log(logger, Messages.EMULATOR_STOPPED_DURING_BOOT());
             } else {
-                log(logger, Messages.BOOT_COMPLETION_TIMED_OUT(bootTimeout / 1000));
+                Utils.log(logger, Messages.BOOT_COMPLETION_TIMED_OUT(bootTimeout / 1000));
             }
             //build.setResult(Result.NOT_BUILT);
             task.setStatus(STATUS.NOT_BUILT);
@@ -745,7 +731,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         // The delay here is a function of boot time, i.e. relative to the slowness of the host
         Thread.sleep(bootDuration / 2);
 
-        log(logger, Messages.UNLOCKING_SCREEN());
+        Utils.log(logger, Messages.UNLOCKING_SCREEN());
         final String keyEventArgs = String.format("-s %s shell input keyevent %%d", emu.getSerial());
         final String menuArgs = String.format(keyEventArgs, 82);
         ArgumentListBuilder menuCmd = emu.getToolCommand(Tool.ADB, menuArgs);
@@ -762,7 +748,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         // Initialise snapshot image, if required
         if (snapshotState == SnapshotState.INITIALISE) {
             // In order to create a clean initial snapshot, give the system some more time to settle
-            log(logger, Messages.WAITING_INITIAL_SNAPSHOT());
+            Utils.log(logger, Messages.WAITING_INITIAL_SNAPSHOT());
             Thread.sleep((long) (bootDuration * 0.8));
 
             // Clear main log before creating snapshot
@@ -778,55 +764,32 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
             boolean stopped = emu.sendCommand("avd stop");
             if (stopped) {
                 // Attempt snapshot generation
-                log(logger, Messages.EMULATOR_PAUSED_SNAPSHOT());
+                Utils.log(logger, Messages.EMULATOR_PAUSED_SNAPSHOT());
                 int creationTimeout = AndroidEmulatorContext.EMULATOR_COMMAND_TIMEOUT_MS * 4;
                 boolean success = emu.sendCommand("avd snapshot save "+ Constants.SNAPSHOT_NAME, creationTimeout);
                 if (!success) {
-                    log(logger, Messages.SNAPSHOT_CREATION_FAILED());
+                    Utils.log(logger, Messages.SNAPSHOT_CREATION_FAILED());
                 }
 
                 // Restart emulator execution
                 boolean restarted = emu.sendCommand("avd start");
                 if (!restarted) {
-                    log(logger, Messages.EMULATOR_RESUME_FAILED());
+                    Utils.log(logger, Messages.EMULATOR_RESUME_FAILED());
                     //cleanUp(build, emuConfig, emu);
                     return null;
                 }
             } else {
-                log(logger, Messages.SNAPSHOT_CREATION_FAILED());
+                Utils.log(logger, Messages.SNAPSHOT_CREATION_FAILED());
             }
         }
 
         // Done!
         final long bootCompleteTime = System.currentTimeMillis();
-        log(logger, Messages.EMULATOR_IS_READY((bootCompleteTime - bootTime) / 1000));
+        Utils.log(logger, Messages.EMULATOR_IS_READY((bootCompleteTime - bootTime) / 1000));
 
 		return true;
 	}
 	
-	/** Helper method for writing to the build log in a consistent manner. */
-    public synchronized static void log(final PrintStream logger, final String message) {
-        log(logger, message, false);
-    }
-
-    /** Helper method for writing to the build log in a consistent manner. */
-    public synchronized static void log(final PrintStream logger, final String message, final Throwable t) {
-        log(logger, message, false);
-        StringWriter s = new StringWriter();
-        t.printStackTrace(new PrintWriter(s));
-        log(logger, s.toString(), false);
-    }
-
-    /** Helper method for writing to the build log in a consistent manner. */
-    synchronized static void log(final PrintStream logger, String message, boolean indent) {
-    	logger.print("[" + new Date() + "] ");
-        if (indent) {
-            message = '\t' + message.replace("\n", "\n\t");
-        } else if (message.length() > 0) {
-            logger.print("[android] ");
-        }
-        logger.println(message);
-    }
     
     /**
      * Waits for a socket on the remote machine's localhost to become available, or times out.
@@ -898,9 +861,9 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 				Thread.sleep(sleep);
 			}
 		} catch (InterruptedException ex) {
-			log(emu.logger(), Messages.INTERRUPTED_DURING_BOOT_COMPLETION());
+			Utils.log(emu.logger(), Messages.INTERRUPTED_DURING_BOOT_COMPLETION());
 		} catch (IOException ex) {
-			log(emu.logger(), Messages.COULD_NOT_CHECK_BOOT_COMPLETION());
+			Utils.log(emu.logger(), Messages.COULD_NOT_CHECK_BOOT_COMPLETION());
 			ex.printStackTrace(emu.logger());
 		}
 
@@ -923,7 +886,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
         //        This is (a) inconsistent; (b) very annoying.
     	try {
 	        // Stop emulator process
-	        log(emu.logger(), Messages.STOPPING_EMULATOR());
+    		Utils.log(emu.logger(), Messages.STOPPING_EMULATOR());
 	        
 	        boolean killed = emu.sendCommand("kill");
 	
@@ -932,7 +895,7 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 	            // Give up trying to kill it after a few seconds, in case it's deadlocked
 	            killed = Utils.killProcess(emu.getProcess(), CrazyMonkeyBuild.KILL_PROCESS_TIMEOUT_MS);
 	            if (!killed) {
-            		log(emu.logger(), Messages.EMULATOR_SHUTDOWN_FAILED());
+	            	Utils.log(emu.logger(), Messages.EMULATOR_SHUTDOWN_FAILED());
             	}
 	        }
 	        /*
@@ -945,9 +908,9 @@ public class RunScripts implements java.util.concurrent.Callable<Task> {
 	                Callable<Boolean, Exception> deletionTask = new EmulatorDeletionTask(emu, emulatorConfig);
 	                emu.getBuild().getChannel().call(deletionTask);
 	            } catch (Exception ex) {
-	                log(emu.logger(), Messages.FAILED_TO_DELETE_AVD(ex.getLocalizedMessage()));
+	            	Utils.log(emu.logger(), Messages.FAILED_TO_DELETE_AVD(ex.getLocalizedMessage()));
 	            } catch (Throwable e) {
-	            	log(emu.logger(), Messages.FAILED_TO_DELETE_AVD(e.getLocalizedMessage()));
+	            	Utils.log(emu.logger(), Messages.FAILED_TO_DELETE_AVD(e.getLocalizedMessage()));
 					e.printStackTrace();
 				}
 	        }

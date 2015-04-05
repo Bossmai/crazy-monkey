@@ -13,12 +13,15 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.Reader;
+import java.io.StringWriter;
 import java.io.Writer;
 import java.net.NetworkInterface;
 import java.net.Socket;
 import java.net.SocketException;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.TreeMap;
@@ -35,6 +38,9 @@ import java.util.regex.Pattern;
 import com.mead.android.crazymonkey.AndroidEmulator;
 import com.mead.android.crazymonkey.CrazyMonkeyBuild;
 import com.mead.android.crazymonkey.Messages;
+import com.mead.android.crazymonkey.build.Builder;
+import com.mead.android.crazymonkey.build.RunBatBuilder;
+import com.mead.android.crazymonkey.build.RunShellBuilder;
 import com.mead.android.crazymonkey.process.ArgumentListBuilder;
 import com.mead.android.crazymonkey.process.Callable;
 import com.mead.android.crazymonkey.process.LocalProc;
@@ -671,4 +677,38 @@ public class Utils {
 		}
 		return null;
 	}
+	
+	public static Builder getBuilder(String script, List<String> args) {
+		Builder builder = null;
+		if (!Utils.isUnix()) {
+			builder = new RunBatBuilder(script, args);
+		} else {
+			builder = new RunShellBuilder(script, args);
+		}
+		return builder;
+	}
+	
+	/** Helper method for writing to the build log in a consistent manner. */
+    public synchronized static void log(final PrintStream logger, final String message) {
+        log(logger, message, false);
+    }
+
+    /** Helper method for writing to the build log in a consistent manner. */
+    public synchronized static void log(final PrintStream logger, final String message, final Throwable t) {
+        log(logger, message, false);
+        StringWriter s = new StringWriter();
+        t.printStackTrace(new PrintWriter(s));
+        log(logger, s.toString(), false);
+    }
+
+    /** Helper method for writing to the build log in a consistent manner. */
+    synchronized static void log(final PrintStream logger, String message, boolean indent) {
+    	logger.print("[" + new Date() + "] ");
+        if (indent) {
+            message = '\t' + message.replace("\n", "\n\t");
+        } else if (message.length() > 0) {
+            logger.print("[android] ");
+        }
+        logger.println(message);
+    }
 }
