@@ -89,7 +89,7 @@ public class RunScriptsOnGenyMotion implements java.util.concurrent.Callable<Tas
 	public boolean runScripts() throws IOException, InterruptedException {
 		boolean result = false;
 		task.startTask();
-		String script = build.getApkFilePath() + "//" + task.getAppRunner().getScriptName();
+		String script = build.getApkFilePath() + "//" + task.getAppRunner().getScriptName() + "_gm";
 
 		if (Utils.isUnix()) {
 			script += ".sh";
