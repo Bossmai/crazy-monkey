@@ -14,6 +14,9 @@ cd $CRAZY_MONKEY_HOME && $ANT_HOME/bin/ant
 # Clean the env
 cd $CRAZY_MONKEY_HOME && /bin/bash ./stop.sh
 
+# Write Devices txt
+$ANDROID_SDK_HOME/platform-tools/adb devices > $CRAZY_MONKEY_HOME/devices.txt
+
 # Run the vpn client
 cd $VPN_CLINET_HOME && ./autorun
 
