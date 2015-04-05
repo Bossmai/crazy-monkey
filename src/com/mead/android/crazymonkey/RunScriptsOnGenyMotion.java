@@ -65,7 +65,7 @@ public class RunScriptsOnGenyMotion implements java.util.concurrent.Callable<Tas
 				e.printStackTrace();
 			}
 		}
-		return null;
+		return task;
 	}
 	
 	
